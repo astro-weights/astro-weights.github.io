@@ -1,0 +1,13 @@
+/* Brand tokens: vault Decisions D19 (palette), D20 (Rubik 600 wordmark). */
+:root {
+  --violet: #8A5CF5;        /* fills only, never text */
+  --violet-deep: #7852EE;   /* links/buttons on light; white text on it */
+  --violet-light: #A882FF;  /* links/text on dark */
+  --gold: #FFA70B;          /* accent, sparingly; never text on light */
+  --ink: #2F2F2F;
+  --muted: #5F6468;
+  --border: #D9D9DE;
+  --surface: #F4F4F6;
+  --space: #0D1117;
+  --paper: #F2F4F8;
+}
