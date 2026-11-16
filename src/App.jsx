@@ -25,6 +25,40 @@ mask = np.ones(48, dtype=np.float32)
 delta = masked_rank1("model.layers.1.mlp.down_proj", W0, u, mask, alpha=0.5)
 save_peft(Edit(deltas=(delta,), base_model="org/name"), "my-edit")`
 
+// Consent banner (Legal spec 2026-11-16): Accept and Reject alike, no close button, nothing loads before Accept.
+// Same storage as the docs and blog theme: {"analytics": true} on Accept, {} on Reject. Footer "Cookie settings" reopens it.
+const CONSENT = '/.__consent'
+const readConsent = () => { try { return JSON.parse(localStorage.getItem(CONSENT)) } catch { return null } }
+
+function Consent() {
+  const [open, setOpen] = useState(() => readConsent() == null)
+  useEffect(() => {
+    const onHash = () => { if (location.hash === '#__consent') setOpen(true) }
+    onHash()
+    addEventListener('hashchange', onHash)
+    return () => removeEventListener('hashchange', onHash)
+  }, [])
+  if (!open) return null
+  const choose = (yes) => {
+    const before = readConsent()?.analytics
+    try { localStorage.setItem(CONSENT, JSON.stringify(yes ? { analytics: true } : {})) } catch { /* storage blocked: ask again next visit */ }
+    if (location.hash === '#__consent') history.replaceState(null, '', location.pathname + location.search)
+    if (before && !yes) return location.reload() // withdrawn: reload so the tag already on this page is gone
+    if (yes) window.awAnalytics?.()
+    setOpen(false)
+  }
+  return (
+    <section className="consent" aria-labelledby="h-consent">
+      <h2 id="h-consent">Cookies on astro-weights.dev</h2>
+      <p>We'd like to use Google Analytics, loaded through Google Tag Manager, to count page views and see which pages help people. It sets cookies and sends details of your visit to Google. Nothing loads unless you accept. <a href="/privacy/">Privacy</a></p>
+      <div className="consent__btns">
+        <button type="button" className="btn btn--primary" onClick={() => choose(true)}>Accept</button>
+        <button type="button" className="btn btn--primary" onClick={() => choose(false)}>Reject</button>
+      </div>
+    </section>
+  )
+}
+
 const reducedNow = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function Code() {
@@ -198,7 +232,7 @@ function Footer() {
           <a href={CHANGELOG}>Changelog</a>
         </nav>
         <p className="foot__status">Pre-alpha. 0.1.0 on PyPI. API changes without notice until 1.0.</p>
-        <p className="foot__legal">Apache-2.0. Logo based on Noto Emoji, Copyright Google LLC, Apache-2.0.</p>
+        <p className="foot__legal">Apache-2.0. Logo based on Noto Emoji, Copyright Google LLC, Apache-2.0. <a href="#__consent">Cookie settings</a> · <a href="/privacy/">Privacy</a></p>
       </div>
     </footer>
   )
@@ -220,6 +254,7 @@ export default function App() {
       <More />
       </main>
       <Footer />
+      <Consent />
     </>
   )
 }

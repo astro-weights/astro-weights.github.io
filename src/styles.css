@@ -371,3 +371,12 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 @media (prefers-reduced-motion: reduce) and (min-width: 860px) {
   .chapter--fix .chapter__in { align-items: center; padding-bottom: 96px; }
 }
+
+/* ---------- consent banner: fixed, non-blocking; Accept and Reject share one style ---------- */
+.consent { position: fixed; z-index: 20; left: var(--gut); right: var(--gut); bottom: 16px; max-width: 40rem; margin-left: auto; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--link); box-shadow: 0 8px 32px rgb(0 0 0 / 0.5); }
+.consent h2 { font: 600 1.15rem/1.3 var(--display); }
+.consent p { margin-top: 6px; font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+.consent a, .foot__legal a { color: var(--link); }
+.consent__btns { margin-top: 14px; display: flex; gap: 12px; }
+.consent__btns .btn { flex: 1; max-width: 12rem; }
+@media (max-width: 859px) { .consent { left: 12px; right: 12px; bottom: 12px; padding: 14px 16px; } .consent__btns .btn { max-width: none; } }
