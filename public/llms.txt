@@ -1,0 +1,32 @@
+# astro-weights
+
+> Agent-driven weight edits. Democratizing AI for all.
+
+Python library. Agent proposes small low-rank edits to open LLM weights; edits that hold up under paired tests get saved as plain PEFT LoRA adapters. Pre-alpha, Apache-2.0. Install: `pip install astro-weights`.
+
+## Docs
+
+- [Home](https://astro-weights.dev/docs/): install, scope, quick start
+- [First edit](https://astro-weights.dev/docs/tutorials/first-edit/): tutorial
+- [Inspect and verify adapter](https://astro-weights.dev/docs/how-to/inspect-adapter/)
+- [Apply adapter across model classes](https://astro-weights.dev/docs/how-to/apply-across-model-classes/)
+- [Save merged weights](https://astro-weights.dev/docs/how-to/save-merged-weights/)
+- [Export GGUF and model card](https://astro-weights.dev/docs/how-to/export-gguf/)
+- [Build adapter from recipe file](https://astro-weights.dev/docs/how-to/build-from-recipe/)
+- [Convert dense update to low-rank delta](https://astro-weights.dev/docs/how-to/dense-to-low-rank/)
+- [Find and gate direction](https://astro-weights.dev/docs/how-to/find-direction/)
+- [Compare two eval arms](https://astro-weights.dev/docs/how-to/compare-arms/)
+- [Run eval end to end](https://astro-weights.dev/docs/how-to/run-eval/)
+- [Reference](https://astro-weights.dev/docs/reference/): Python API
+- [CLI](https://astro-weights.dev/docs/reference/cli/)
+- [Why LoRA output](https://astro-weights.dev/docs/explanation/why-lora/)
+
+## Blog
+
+- [Blog](https://astro-weights.dev/blog/): research, release, how-to posts
+
+## Source
+
+- [GitHub](https://github.com/astro-weights/astro-weights)
+- [PyPI](https://pypi.org/project/astro-weights/)
+- [Changelog](https://github.com/astro-weights/astro-weights/blob/main/CHANGELOG.md)
