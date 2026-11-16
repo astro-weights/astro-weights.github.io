@@ -109,7 +109,7 @@ function Story() {
           <div className="chapter__in">
             <div className="copy-col">
               <h1 id="h1" className="enter" style={{ '--d': '0ms' }}>Small course corrections for open LLMs.</h1>
-              <p className="lede enter" style={{ '--d': '120ms' }}>Agent-driven weight edits, exported as standard LoRA adapters.</p>
+              <p className="lede enter" style={{ '--d': '120ms' }}>Agent-driven weight edits, democratizing AI for all.</p>
               <div className="actions enter" style={{ '--d': '220ms' }}>
                 <a className="btn btn--primary" href={DOCS + 'tutorials/first-edit/'}>Read the docs</a>
                 <a className="btn btn--ghost" href={GITHUB}>GitHub</a>
