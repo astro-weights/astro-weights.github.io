@@ -1,5 +1,6 @@
 #!/bin/sh
-# Build the Pages artifact: landing page at /, library docs at /docs/, redirect stubs for old root docs URLs.
+# Build the Pages artifact: landing page at /, library docs at /docs/, blog at /blog/,
+# redirect stubs for old root docs URLs, and sitemap.xml + robots.txt at the root.
 # Output: _site/. Needs uv and npm on PATH, and the library repo checked out at $LIB (default: lib).
 set -eu
 
@@ -16,6 +17,14 @@ rm -rf _site dist
 # 1. docs -> $LIB/site/
 (cd "$LIB" && uv run --only-group docs zensical build --strict --clean)
 
+# 1b. blog -> $LIB/site-blog/. Own config, so its links and canonical URLs are rooted at /blog/.
+#     Skipped until the library repo ships zensical.blog.toml.
+BLOG=
+if [ -f "$LIB/zensical.blog.toml" ]; then
+  (cd "$LIB" && uv run --only-group docs zensical build -f zensical.blog.toml --strict --clean)
+  BLOG=1
+fi
+
 # 2. landing -> dist/
 npm ci && npx vite build
 
@@ -24,6 +33,10 @@ mkdir _site
 cp -R dist/. _site/
 mkdir _site/docs
 cp -R "$LIB/site/." _site/docs/
+if [ -n "$BLOG" ]; then
+  mkdir _site/blog
+  cp -R "$LIB/site-blog/." _site/blog/
+fi
 
 # 4. redirect stubs: every docs page that used to live at the root, except the docs home.
 #    Never overwrite a landing file.
@@ -70,5 +83,32 @@ a { color: #A882FF; }
 </body>
 </html>
 NOTFOUND
+
+# 6. crawler files at the domain root. llms.txt comes from public/ via the landing build.
+{
+  echo '<?xml version="1.0" encoding="UTF-8"?>'
+  echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+  echo "<url><loc>$DOMAIN/</loc></url>"
+  for map in _site/docs/sitemap.xml _site/blog/sitemap.xml; do
+    [ -f "$map" ] && grep -o '<loc>[^<]*</loc>' "$map" | sed 's|.*|<url>&</url>|'
+  done
+  echo '</urlset>'
+} > _site/sitemap.xml
+
+cat > _site/robots.txt <<ROBOTS
+User-agent: *
+Allow: /
+
+Sitemap: $DOMAIN/sitemap.xml
+ROBOTS
+
+# 7. check: fail the build, not the live site.
+for f in sitemap.xml robots.txt llms.txt; do
+  [ -s "_site/$f" ] || { echo "missing _site/$f" >&2; exit 1; }
+done
+grep -q "<loc>$DOMAIN/docs/</loc>" _site/sitemap.xml || { echo "sitemap.xml lacks docs URLs" >&2; exit 1; }
+if [ -n "$BLOG" ]; then
+  grep -q "<loc>$DOMAIN/blog/" _site/sitemap.xml || { echo "sitemap.xml lacks blog URLs" >&2; exit 1; }
+fi
 
 echo "built _site/"
