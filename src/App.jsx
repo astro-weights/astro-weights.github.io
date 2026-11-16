@@ -155,7 +155,7 @@ function More() {
       <div className="wrap more__in">
         <div className="more__head">
           <h2 id="h-today">What it does today</h2>
-          <p className="ver">0.1.0</p>
+          <p className="ver">{__AW_VERSION__}</p>
           <p className="cli"><span>CLI</span> <code>astro-weights inspect &lt;adapter&gt;</code></p>
         </div>
         <ul className="areas">
@@ -197,7 +197,7 @@ function Footer() {
           <a href={PYPI}>PyPI</a>
           <a href={CHANGELOG}>Changelog</a>
         </nav>
-        <p className="foot__status">Pre-alpha. 0.1.0 on PyPI. API changes without notice until 1.0.</p>
+        <p className="foot__status">Pre-alpha. {__AW_VERSION__} on PyPI. API changes without notice until 1.0.</p>
         <p className="foot__legal">Apache-2.0. Logo based on Noto Emoji, Copyright Google LLC, Apache-2.0.</p>
       </div>
     </footer>
