@@ -8,11 +8,11 @@ const PYPI = 'https://pypi.org/project/astro-weights/'
 const CHANGELOG = 'https://github.com/astro-weights/astro-weights/blob/main/CHANGELOG.md'
 const BLOG = 'https://astro-weights.dev/blog/'
 
-// Results: headline + streaming demo. Pair = MATH-500 item math500-289 from the 27B run in the headline (full 500, greedy,
+// Results: carousel of two slides (27B, 9B), each headline + streaming demo. Pair = MATH-500 item math500-289 from the 27B run in the headline (full 500, greedy,
 // cap 4096, commit e4bca76), picked by Research's fixed rule (both correct, short problem, cut nearest median of all 500;
 // vault Brand/Landing claim wording 0.1, "Mock 4 item pair"). Answer texts verbatim in
 // src/demo9.json, loaded by dynamic import near view (kept out of the first-paint bundle). Problem, counts and outcomes inline:
-// they are the end state for reduced motion, screen readers and before the data loads. Starts once in view; Pause / Play / Replay.
+// they are the end state for reduced motion, screen readers and before the data loads. Runs while in view; Pause / Play / Replay.
 const tok = (v) => v.toLocaleString('en-US')
 const CAP = 4096 // token cap of the run
 const TPS = 100 // tokens per second, same for both columns: base (1,138 tokens) runs about 11 s
@@ -20,20 +20,38 @@ const TPS = 100 // tokens per second, same for both columns: base (1,138 tokens)
 // minimum value of \[(a + b + c + d) \left( \frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d} \right).\]"
 const PROBLEM = 'Let a, b, c, d be positive real numbers. Find the minimum value of (a + b + c + d)(1/a + 1/b + 1/c + 1/d).'
 const DEMO = [['Base model', 'base', 1138, 'Finished in 1,138 tokens, correct'], ['With adapter', 'edit', 800, 'Finished in 800 tokens, correct']]
-function Demo() {
+// Slides: 27B (headline run) and 9B. 9B pair = MATH-500 item math500-120 from an earlier Qwen3.5-9B run, picked for a large
+// saving, NOT typical; nothing on the slide says so (user order 2026-11-17, risk accepted). 9B line = claims sheet C6 (held-out,
+// n=244), without C6's CI or the C9 GSM8K loss (user order). Wording: vault Brand/Landing claim wording 0.1, "Carousel 9B slide".
+const SLIDES = [
+  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on MATH-500. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
+  {
+    tab: '9B · MATH-500',
+    lead: <>9B adapter: about <mark>10%</mark> fewer tokens on <span className="nb">held-out</span> <span className="nb">MATH-500</span> (n=244).</>,
+    problem: 'Let f(x) be an odd function, and let g(x) be an even function. Is f(f(g(f(g(f(x)))))) even, odd, or neither?\n\nEnter "odd", "even", or "neither".',
+    tps: CAP / 20, load: () => import('./demo9b.json'),
+    cols: [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']],
+  },
+]
+
+// One slide's demo: runs only while on screen (stops and resets when its slide leaves).
+function Pair({ s }) {
   const root = useRef(null)
   const [data, setData] = useState(null)
-  const [seen, setSeen] = useState(false)
+  const [on, setOn] = useState(false)
   const [ms, setMs] = useState(null) // null = rest (end state)
   const [run, setRun] = useState(false)
-  const total = (DEMO[0][2] / TPS) * 1000
+  const total = (s.cols[0][2] / s.tps) * 1000
   useEffect(() => {
-    const load = new IntersectionObserver(([e]) => { if (e.isIntersecting) { load.disconnect(); import('./demo9.json').then((m) => setData(m.default)).catch(() => {}) } }, { rootMargin: '600px' })
-    const view = new IntersectionObserver(([e]) => { if (e.isIntersecting) { view.disconnect(); setSeen(true) } }, { threshold: 0.35 })
+    // vertical margin only: a slide waiting off to the side does not load its text
+    const load = new IntersectionObserver(([e]) => { if (e.isIntersecting) { load.disconnect(); s.load().then((m) => setData(m.default)).catch(() => {}) } }, { rootMargin: '600px 0px' })
+    const view = new IntersectionObserver(([e]) => setOn(e.intersectionRatio >= 0.35), { threshold: 0.35 })
     load.observe(root.current); view.observe(root.current)
     return () => { load.disconnect(); view.disconnect() }
-  }, [])
-  useEffect(() => { if (seen && data && !reducedNow()) { setMs(0); setRun(true) } }, [seen, data])
+  }, [s])
+  useEffect(() => {
+    if (!on) { setRun(false); setMs(null) } else if (data && !reducedNow()) { setMs(0); setRun(true) }
+  }, [on, data])
   useEffect(() => {
     if (!run) return
     const id = setInterval(() => setMs((m) => (m + 50 < total ? m + 50 : null)), 50)
@@ -45,11 +63,11 @@ function Demo() {
     <div className="demo" ref={root}>
       <div className="demo__problem">
         <p className="demo__label">Same problem</p>
-        <blockquote>{PROBLEM}</blockquote>
+        <blockquote>{s.problem}</blockquote>
       </div>
       <div className="demo__cols">
-        {DEMO.map(([who, key, end, outcome], i) => {
-          const n = ms == null ? end : Math.min(end, Math.floor((ms / 1000) * TPS))
+        {s.cols.map(([who, key, end, outcome], i) => {
+          const n = ms == null ? end : Math.min(end, Math.floor((ms / 1000) * s.tps))
           const text = data ? data[key] : ''
           return (
             <div className={'demo__col' + (i ? ' demo__col--edit' : '')} key={key}>
@@ -69,13 +87,48 @@ function Demo() {
   )
 }
 
+const Face = ({ s }) => (
+  <>
+    <p className="results__lead">{s.lead}</p>
+    <Pair s={s} />
+  </>
+)
+
+// Native scroll-snap track, no auto-advance; controls above, track takes the height of the slide on screen.
+function Carousel() {
+  const track = useRef(null)
+  const [i, setI] = useState(0)
+  const n = SLIDES.length
+  const onScroll = () => { const t = track.current, max = t.scrollWidth - t.clientWidth; setI(max > 0 ? Math.round((t.scrollLeft / max) * (n - 1)) : 0) }
+  const go = (k) => track.current.scrollTo({ left: track.current.children[k].offsetLeft, behavior: reducedNow() ? 'auto' : 'smooth' })
+  // track takes the height of the slide on screen, so a short card leaves no blank tail (not when both cards show side by side)
+  useEffect(() => {
+    const fit = () => { const t = track.current; t.style.height = getComputedStyle(t).display === 'flex' ? t.children[i].offsetHeight + 'px' : '' }
+    fit(); addEventListener('resize', fit); document.fonts?.ready.then(fit)
+    return () => removeEventListener('resize', fit)
+  }, [i])
+  const name = (k) => `Slide ${k + 1} of ${n}: ${SLIDES[k].tab}`
+  return (
+    <div className="car" role="group" aria-roledescription="carousel" aria-label="Highlighted results">
+      <div className="car__nav">
+        <button type="button" className="car__arrow" aria-label="Previous slide" disabled={i === 0} onClick={() => go(i - 1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="2" /></svg></button>
+        {SLIDES.map((s, k) => <button type="button" className="car__dot" key={s.tab} aria-label={name(k)} aria-current={k === i || undefined} onClick={() => go(k)} />)}
+        <button type="button" className="car__arrow" aria-label="Next slide" disabled={i === n - 1} onClick={() => go(i + 1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" /></svg></button>
+        <p className="car__at" aria-live="polite">{i + 1} of {n}</p>
+      </div>
+      <div className="car__track" ref={track} onScroll={onScroll}>
+        {SLIDES.map((s, k) => <article className="car__slide" key={s.tab} role="group" aria-roledescription="slide" aria-label={name(k)}><Face s={s} /></article>)}
+      </div>
+    </div>
+  )
+}
+
 function Results() {
   return (
     <section className="sec results" id="results" aria-labelledby="h-results">
       <div className="wrap">
         <h2 id="h-results"><Head>Results</Head></h2>
-        <p className="results__lead">27B adapter: answer length about <mark>−30%</mark> on MATH-500. No accuracy change detected.</p>
-        <Demo />
+        <Carousel />
       </div>
     </section>
   )

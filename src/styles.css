@@ -413,3 +413,18 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
   .demo__panel { --lines: 15; }
 }
 @media (prefers-reduced-motion: reduce) { .demo__btn { display: none; } }
+
+/* ---------- results carousel (mock 12) ---------- */
+.nb { white-space: nowrap; }
+.car { margin-top: 12px; }
+.car__track { position: relative; display: flex; align-items: flex-start; gap: var(--gut); overflow: auto hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.car__track::-webkit-scrollbar { display: none; }
+.car__slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; padding: 20px 16px 8px; border: 1px solid var(--line); }
+.car .results__lead { margin-top: 0; font-size: clamp(1.15rem, 1rem + 0.7vw, 1.5rem); }
+.car__nav { display: flex; align-items: center; margin: 0 0 8px -14px; }
+.car__nav button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--text); cursor: pointer; }
+.car__nav button:disabled { color: var(--line); cursor: default; }
+.car__dot::before { content: ''; width: 10px; height: 10px; border: 1.5px solid var(--text); border-radius: 50%; }
+.car__dot[aria-current]::before { background: var(--text); }
+.car__at { margin-left: 8px; color: var(--dim); font: 500 0.875rem/1 var(--display); font-variant-numeric: tabular-nums; }
+@media (min-width: 860px) { .car__slide { padding: 32px 32px 16px; } }
