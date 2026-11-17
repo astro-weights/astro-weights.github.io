@@ -4,11 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Agent-driven weight edits. Democratizing AI for all.">
-  <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TRNWLJXF"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    // Google Tag Manager, loaded only after consent. The choice lives in localStorage "/.__consent",
+    // the key the docs and blog theme uses (extra.scope = "/"), so one choice covers the whole site.
+    function awAnalytics() {
+      if (window.dataLayer) return;
+      window.dataLayer = [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-TRNWLJXF';
+      document.head.appendChild(s);
+    }
+    try { if ((JSON.parse(localStorage.getItem('/.__consent')) || {}).analytics) awAnalytics(); } catch (e) {}
   </script>
   <meta name="description" content="Agent-driven weight edits, exported as standard LoRA adapters.">
   <meta name="color-scheme" content="dark">
