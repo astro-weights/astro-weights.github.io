@@ -63,7 +63,6 @@ function Demo() {
         })}
       </div>
       <div className="demo__foot">
-        <p className="demo__note">One of the 500 problems, picked by a fixed rule set before reading any answers: both answers correct, neither hit the token cap, short problem, token cut closest to the median of all 500.</p>
         <button type="button" className="demo__btn" onClick={run ? () => setRun(false) : play}>{run ? 'Pause' : ms == null ? 'Replay' : 'Play'}</button>
       </div>
     </div>
