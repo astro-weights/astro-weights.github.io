@@ -6,6 +6,77 @@ const DOCS = 'https://astro-weights.dev/docs/'
 const GITHUB = 'https://github.com/astro-weights/astro-weights'
 const PYPI = 'https://pypi.org/project/astro-weights/'
 const CHANGELOG = 'https://github.com/astro-weights/astro-weights/blob/main/CHANGELOG.md'
+const BLOG = 'https://astro-weights.dev/blog/'
+
+// Results: headline + streaming demo. Pair = MATH-500 item math500-120, sample 1, from an earlier Qwen3.5-9B run on glitch
+// (results/c1-base vs results/c1-fable-fable1, gens.jsonl), not the 27B run in the headline. Answer texts verbatim in
+// src/demo9.json, loaded by dynamic import near view (kept out of the first-paint bundle). Problem, counts and outcomes inline:
+// they are the end state for reduced motion, screen readers and before the data loads. Starts once in view; Pause / Play / Replay.
+const tok = (v) => v.toLocaleString('en-US')
+const CAP = 4096 // token cap of the run
+const TPS = CAP / 20 // tokens per second, same for both columns: base reaches the cap 20 s after start (pace of the reference video)
+const PROBLEM = "Let $f(x)$ be an odd function, and let $g(x)$ be an even function.  Is $f(f(g(f(g(f(x))))))$ even, odd, or neither?\n\nEnter \"odd\", \"even\", or \"neither\"."
+const DEMO = [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']]
+function Demo() {
+  const root = useRef(null)
+  const [data, setData] = useState(null)
+  const [seen, setSeen] = useState(false)
+  const [ms, setMs] = useState(null) // null = rest (end state)
+  const [run, setRun] = useState(false)
+  const total = (CAP / TPS) * 1000
+  useEffect(() => {
+    const load = new IntersectionObserver(([e]) => { if (e.isIntersecting) { load.disconnect(); import('./demo9.json').then((m) => setData(m.default)).catch(() => {}) } }, { rootMargin: '600px' })
+    const view = new IntersectionObserver(([e]) => { if (e.isIntersecting) { view.disconnect(); setSeen(true) } }, { threshold: 0.35 })
+    load.observe(root.current); view.observe(root.current)
+    return () => { load.disconnect(); view.disconnect() }
+  }, [])
+  useEffect(() => { if (seen && data && !reducedNow()) { setMs(0); setRun(true) } }, [seen, data])
+  useEffect(() => {
+    if (!run) return
+    const id = setInterval(() => setMs((m) => (m + 50 < total ? m + 50 : null)), 50)
+    return () => clearInterval(id)
+  }, [run, total])
+  useEffect(() => { if (ms == null) setRun(false) }, [ms])
+  const play = () => { if (ms == null) setMs(0); setRun(true) }
+  return (
+    <div className="demo" ref={root}>
+      <div className="demo__problem">
+        <p className="demo__label">Same problem</p>
+        <blockquote>{PROBLEM}</blockquote>
+      </div>
+      <div className="demo__cols">
+        {DEMO.map(([who, key, end, outcome], i) => {
+          const n = ms == null ? end : Math.min(end, Math.floor((ms / 1000) * TPS))
+          const text = data ? data[key] : ''
+          return (
+            <div className={'demo__col' + (i ? ' demo__col--edit' : '')} key={key}>
+              <p className="demo__who">{who}</p>
+              <i className="demo__bar"><i style={{ '--w': n / CAP }} /></i>
+              <p className="demo__count">{tok(n)} of {tok(CAP)} tokens</p>
+              <div className="demo__panel" data-rest={ms == null || !run || undefined} tabIndex={0} role="group" aria-label={who + ' answer'}><pre>{text.slice(0, Math.floor((n * text.length) / end))}</pre></div>
+              <p className="demo__end" style={{ visibility: n === end ? 'visible' : 'hidden' }}>{outcome}</p>
+            </div>
+          )
+        })}
+      </div>
+      <div className="demo__foot">
+        <button type="button" className="demo__btn" onClick={run ? () => setRun(false) : play}>{run ? 'Pause' : ms == null ? 'Replay' : 'Play'}</button>
+      </div>
+    </div>
+  )
+}
+
+function Results() {
+  return (
+    <section className="sec results" id="results" aria-labelledby="h-results">
+      <div className="wrap">
+        <h2 id="h-results"><Head>Results</Head></h2>
+        <p className="results__lead">27B adapter: answer length about <mark>−30%</mark> on MATH-500. No accuracy change detected.</p>
+        <Demo />
+      </div>
+    </section>
+  )
+}
 const LAYER = 'model.layers.1.mlp.down_proj'
 
 const AREAS = [
@@ -193,6 +264,7 @@ function Footer() {
         </div>
         <nav aria-label="Footer">
           <a href={DOCS}>Docs</a>
+          <a href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a href={PYPI}>PyPI</a>
           <a href={CHANGELOG}>Changelog</a>
@@ -211,12 +283,14 @@ export default function App() {
         <a className="word" href="#drift">astro-weights</a>
         <nav aria-label="Main">
           <a className="nav-x" href={DOCS}>Docs</a>
+          <a href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a className="nav-x" href={PYPI}>PyPI</a>
         </nav>
       </header>
       <main>
       <Story />
+      <Results />
       <More />
       </main>
       <Footer />
