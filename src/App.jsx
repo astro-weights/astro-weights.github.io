@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import logo from '/shared/logo.svg'
 import { initStory } from './story.js'
+import Counter from './rb/Counter.jsx'
+import DecryptedText from './rb/DecryptedText.jsx'
 
 const DOCS = 'https://astro-weights.dev/docs/'
 const GITHUB = 'https://github.com/astro-weights/astro-weights'
@@ -24,7 +26,7 @@ const DEMO = [['Base model', 'base', 1138, 'Finished in 1,138 tokens, correct'],
 // saving, NOT typical; nothing on the slide says so (user order 2026-11-17, risk accepted). 9B line = claims sheet C6 (held-out,
 // n=244), without C6's CI or the C9 GSM8K loss (user order). Wording: vault Brand/Landing claim wording 0.1, "Carousel 9B slide".
 const SLIDES = [
-  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on MATH-500. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
+  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on <span className="nb">MATH-500</span>. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
   {
     tab: '9B · MATH-500',
     lead: <>9B adapter: about <mark>10%</mark> fewer tokens on <span className="nb">held-out</span> <span className="nb">MATH-500</span> (n=244).</>,
@@ -73,7 +75,7 @@ function Pair({ s }) {
             <div className={'demo__col' + (i ? ' demo__col--edit' : '')} key={key}>
               <p className="demo__who">{who}</p>
               <i className="demo__bar"><i style={{ '--w': n / CAP }} /></i>
-              <p className="demo__count">{tok(n)} of {tok(CAP)} tokens</p>
+              <p className="demo__count demo__count--big"><b>{tok(n)}</b><span>tokens of {tok(CAP)} cap</span></p>
               <div className="demo__panel" data-rest={ms == null || !run || undefined} tabIndex={0} role="group" aria-label={who + ' answer'}><pre>{text.slice(0, Math.floor((n * text.length) / end))}</pre></div>
               <p className="demo__end" style={{ visibility: n === end ? 'visible' : 'hidden' }}>{outcome}</p>
             </div>
@@ -111,10 +113,8 @@ function Carousel() {
   return (
     <div className="car" role="group" aria-roledescription="carousel" aria-label="Highlighted results">
       <div className="car__nav">
-        <button type="button" className="car__arrow" aria-label="Previous slide" disabled={i === 0} onClick={() => go(i - 1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="2" /></svg></button>
-        {SLIDES.map((s, k) => <button type="button" className="car__dot" key={s.tab} aria-label={name(k)} aria-current={k === i || undefined} onClick={() => go(k)} />)}
-        <button type="button" className="car__arrow" aria-label="Next slide" disabled={i === n - 1} onClick={() => go(i + 1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" /></svg></button>
-        <p className="car__at" aria-live="polite">{i + 1} of {n}</p>
+        {SLIDES.map((s, k) => <button type="button" className="car__tab" key={s.tab} aria-label={name(k)} aria-current={k === i || undefined} onClick={() => go(k)}>{s.tab}</button>)}
+        <p className="car__at sr" aria-live="polite">{i + 1} of {n}</p>
       </div>
       <div className="car__track" ref={track} onScroll={onScroll}>
         {SLIDES.map((s, k) => <article className="car__slide" key={s.tab} role="group" aria-roledescription="slide" aria-label={name(k)}><Face s={s} /></article>)}
@@ -221,6 +221,8 @@ function CopyInstall() {
 }
 
 const Head = ({ children }) => <span className="head">{children}</span>
+// Chapter word resolves once when it comes into view (React Bits DecryptedText; reduced motion shows the word as is)
+const Word = ({ children }) => <Head><DecryptedText text={children} animateOn="view" sequential speed={45} characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" /></Head>
 
 // Backdrop = poster stars + GL host + overlay (course line, astronaut, adapter tag). One in the sticky stage, one per chapter for reduced motion.
 function Backdrop({ className }) {
@@ -273,12 +275,20 @@ function Story() {
               <p className="lede enter" style={{ '--d': '120ms' }}>Agent-driven weight edits. Democratizing AI for all.</p>
               <div className="actions enter" style={{ '--d': '220ms' }}>
                 <a className="btn btn--primary" href={DOCS + 'tutorials/first-edit/'}>Read the docs</a>
-                <a className="btn btn--ghost" href={GITHUB}>GitHub</a>
               </div>
               <div className="enter" style={{ '--d': '320ms' }}><CopyInstall /></div>
+              {/* Readout: one hard fact on the first screen; wording from the approved 27B Results headline (DRAFT labels, Marketing) */}
+<div className="readout enter" style={{ '--d': '420ms' }}>
+                <p className="readout__scope">27B adapter · <span className="nb">MATH-500</span></p>
+                <dl>
+                  <div><dt>Answer length</dt><dd><a href="#results" aria-label="about minus 30 percent, see results">≈<Counter value={30} prefix="−" suffix="%" motionBlur={false} fontSize="1em" fontWeight={600} duration={1.1} stagger={0.12} /></a></dd></div>
+                  <div><dt>Accuracy</dt><dd>No change detected</dd></div>
+                  <div><dt>Ships as</dt><dd>LoRA adapter</dd></div>
+                </dl>
+                </div>
             </div>
             <aside className="note enter" style={{ '--d': '460ms' }}>
-              <h2><Head>Drift</Head></h2>
+              <h2><Word>Drift</Word></h2>
               <p>A model drifts off course: too wordy, stuck in a loop.</p>
             </aside>
           </div>
@@ -288,7 +298,7 @@ function Story() {
           <Backdrop className="frame" />
           <div className="chapter__in">
             <div className="copy-col">
-              <h2 id="h-burn"><Head>Burn</Head></h2>
+              <h2 id="h-burn"><Word>Burn</Word></h2>
               <p className="big">astro-weights makes a small burn on the weights.</p>
             </div>
           </div>
@@ -298,9 +308,9 @@ function Story() {
           <Backdrop className="frame" />
           <div className="chapter__in">
             <div className="copy-col">
-              <h2 id="h-fix"><Head>Correction</Head></h2>
+              <h2 id="h-fix"><Word>Correction</Word></h2>
               <p className="big">astro-weights hands you the correction as a LoRA adapter.</p>
-              <CopyInstall />
+              
             </div>
           </div>
         </section>
@@ -309,40 +319,58 @@ function Story() {
   )
 }
 
-// Today + Quick look + Why LoRA in one dense section (compact round): head line, areas row, code beside the Why LoRA card.
+
+// Real output of the Quick look code, then `astro-weights inspect my-edit` (astro-weights 0.1.2, run 2026-11-17)
+const INSPECT = `$ astro-weights inspect my-edit
+base model: org/name
+rank: 1
+modules: 1
+module                        out x in        |B|_F     |A|_F    |BA|_F
+model.layers.1.mlp.down_proj  16x48               1      3.02      3.02
+manifest: ok`
+
 function More() {
   return (
     <section className="sec more" id="today" aria-labelledby="h-today">
-      <div className="wrap more__in">
-        <div className="more__head">
-          <h2 id="h-today">What it does today</h2>
-          <p className="ver">{__AW_VERSION__}</p>
-          <p className="cli"><span>CLI</span> <code>astro-weights inspect &lt;adapter&gt;</code></p>
-        </div>
-        <ul className="areas">
-          {AREAS.map(([name, text]) => (
+      <div className="wrap">
+        <h2 id="h-today">What it does today</h2>
+        <ol className="steps">
+          {AREAS.map(([name, text], k) => (
             <li key={name}>
+              <span className="steps__n" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
               <h3>{name}</h3>
               <p>{text}</p>
             </li>
           ))}
-        </ul>
+        </ol>
         <section className="quick" id="quick" aria-labelledby="h-quick">
-          <h2 id="h-quick">Quick look</h2>
-          <pre className="code" tabIndex={0} aria-label="Quick look: Python example"><code><Code /></code></pre>
-        </section>
-        <section className="whycard" id="why" aria-labelledby="h-why">
-          <h2 id="h-why">Why LoRA</h2>
-          <div className="why">
-            <p>Every serving stack already loads it: transformers, PEFT, vLLM, llama.cpp.</p>
-            <p>No custom runtime.</p>
-            <p>Drop the adapter to get the base model back.</p>
+          <h3 id="h-quick">Quick look</h3>
+          <div className="quick__pair">
+            <pre className="code" tabIndex={0} aria-label="Quick look: Python example"><code><Code /></code></pre>
+            <pre className="code code--out" tabIndex={0} aria-label="Output: astro-weights inspect"><code>{INSPECT.split('\n').map((l, i) => <span key={i} className={'ln' + (i === 0 ? ' ln--cmd' : l.startsWith('model.') ? ' ln--hl' : '')}>{l}{'\n'}</span>)}</code></pre>
           </div>
+          <p className="whyline"><b>Why LoRA.</b> Every serving stack already loads it: transformers, PEFT, vLLM, llama.cpp. No custom runtime. Drop the adapter to get the base model back.</p>
         </section>
       </div>
     </section>
   )
 }
+
+// Closing screen. DRAFT heading (Marketing).
+function End() {
+  return (
+    <section className="sec end" aria-labelledby="h-end">
+      <div className="poster" aria-hidden="true" />
+      <div className="wrap end__in">
+        <h2 id="h-end">Make the first edit.</h2>
+        <CopyInstall />
+        <div className="actions"><a className="btn btn--primary" href={DOCS + 'tutorials/first-edit/'}>Read the docs</a><a className="btn btn--ghost" href={GITHUB}>GitHub</a></div>
+        <p className="end__status">Pre-alpha. {__AW_VERSION__} on PyPI. Apache-2.0.</p>
+      </div>
+    </section>
+  )
+}
+
 
 function Footer() {
   return (
@@ -360,7 +388,7 @@ function Footer() {
           <a href={CHANGELOG}>Changelog</a>
         </nav>
         <p className="foot__status">Pre-alpha. {__AW_VERSION__} on PyPI. API changes without notice until 1.0.</p>
-        <p className="foot__legal">Apache-2.0. Logo based on Noto Emoji, Copyright Google LLC, Apache-2.0. <a href="#__consent">Cookie settings</a> · <a href="/privacy/">Privacy</a></p>
+        <p className="foot__legal">Apache-2.0. Logo based on Noto Emoji, Copyright Google LLC, Apache-2.0. <span className="nb"><a href="#__consent">Cookie settings</a> · <a href="/privacy/">Privacy</a></span></p>
       </div>
     </footer>
   )
@@ -372,8 +400,8 @@ export default function App() {
       <header className="top">
         <a className="word" href="#drift">astro-weights</a>
         <nav aria-label="Main">
-          <a className="nav-x" href={DOCS}>Docs</a>
-          <a href={BLOG}>Blog</a>
+          <a href={DOCS}>Docs</a>
+          <a className="nav-x" href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a className="nav-x" href={PYPI}>PyPI</a>
         </nav>
@@ -382,6 +410,7 @@ export default function App() {
       <Story />
       <Results />
       <More />
+      <End />
       </main>
       <Footer />
       <Consent />
