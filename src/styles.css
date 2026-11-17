@@ -314,10 +314,10 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .ln--hl { background: #1F1840; margin: 0 -24px; padding: 0 24px; box-shadow: inset 2px 0 0 var(--link); }
 .tk-k { color: var(--link); } .tk-s { color: var(--text); } .tk-n { color: var(--dim); }
 
-.whycard { grid-area: why; background: var(--paper); color: var(--ink); border-radius: 4px; padding: 20px 24px 8px; }
-.whycard h2 { color: var(--violet-deep); }
+.whycard { grid-area: why; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 20px 24px 8px; }
+.whycard h2 { color: var(--violet-light); }
 .why { display: grid; margin-top: 10px; }
-.why p { padding: 12px 0; border-top: 1px solid var(--border); font: 500 1.2rem/1.3 var(--display); letter-spacing: -0.005em; text-wrap: balance; }
+.why p { padding: 12px 0; border-top: 1px solid var(--line); font: 500 1.2rem/1.3 var(--display); letter-spacing: -0.005em; text-wrap: balance; }
 @media (min-width: 640px) and (max-width: 1279px) { .why { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; } .whycard { padding-bottom: 12px; } }
 
 .foot { padding: 20px 0 28px; border-top: 1px solid var(--line); }
@@ -404,7 +404,6 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .demo__col--edit .demo__bar i { background: var(--violet); }
 .demo__col--edit .demo__end { background: var(--violet-deep); color: #fff; }
 .demo__foot { margin-top: 10px; }
-.demo__note { margin: 0 0 4px; color: var(--dim); font-size: 0.875rem; max-width: 60ch; }
 .demo__btn { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--link); font: 600 0.9375rem/1 var(--display); cursor: pointer; }
 .demo__btn:hover { text-decoration: underline; text-underline-offset: 4px; }
 @media (min-width: 860px) {
