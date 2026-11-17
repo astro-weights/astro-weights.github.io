@@ -404,6 +404,7 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .demo__col--edit .demo__bar i { background: var(--violet); }
 .demo__col--edit .demo__end { background: var(--violet-deep); color: #fff; }
 .demo__foot { margin-top: 10px; }
+.demo__note { margin: 0 0 4px; color: var(--dim); font-size: 0.875rem; max-width: 60ch; }
 .demo__btn { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--link); font: 600 0.9375rem/1 var(--display); cursor: pointer; }
 .demo__btn:hover { text-decoration: underline; text-underline-offset: 4px; }
 @media (min-width: 860px) {
