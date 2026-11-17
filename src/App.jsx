@@ -8,22 +8,25 @@ const PYPI = 'https://pypi.org/project/astro-weights/'
 const CHANGELOG = 'https://github.com/astro-weights/astro-weights/blob/main/CHANGELOG.md'
 const BLOG = 'https://astro-weights.dev/blog/'
 
-// Results: headline + streaming demo. Pair = MATH-500 item math500-120, sample 1, from an earlier Qwen3.5-9B run on glitch
-// (results/c1-base vs results/c1-fable-fable1, gens.jsonl), not the 27B run in the headline. Answer texts verbatim in
+// Results: headline + streaming demo. Pair = MATH-500 item math500-289 from the 27B run in the headline (full 500, greedy,
+// cap 4096, commit e4bca76), picked by Research's fixed rule (both correct, short problem, cut nearest median of all 500;
+// vault Brand/Landing claim wording 0.1, "Mock 4 item pair"). Answer texts verbatim in
 // src/demo9.json, loaded by dynamic import near view (kept out of the first-paint bundle). Problem, counts and outcomes inline:
 // they are the end state for reduced motion, screen readers and before the data loads. Starts once in view; Pause / Play / Replay.
 const tok = (v) => v.toLocaleString('en-US')
 const CAP = 4096 // token cap of the run
-const TPS = CAP / 20 // tokens per second, same for both columns: base reaches the cap 20 s after start (pace of the reference video)
-const PROBLEM = "Let $f(x)$ be an odd function, and let $g(x)$ be an even function.  Is $f(f(g(f(g(f(x))))))$ even, odd, or neither?\n\nEnter \"odd\", \"even\", or \"neither\"."
-const DEMO = [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']]
+const TPS = 100 // tokens per second, same for both columns: base (1,138 tokens) runs about 11 s
+// Problem shown without LaTeX markup, same math. Source text: "Let $a,$ $b,$ $c,$ $d$ be positive real numbers.  Find the
+// minimum value of \[(a + b + c + d) \left( \frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d} \right).\]"
+const PROBLEM = 'Let a, b, c, d be positive real numbers. Find the minimum value of (a + b + c + d)(1/a + 1/b + 1/c + 1/d).'
+const DEMO = [['Base model', 'base', 1138, 'Finished in 1,138 tokens, correct'], ['With adapter', 'edit', 800, 'Finished in 800 tokens, correct']]
 function Demo() {
   const root = useRef(null)
   const [data, setData] = useState(null)
   const [seen, setSeen] = useState(false)
   const [ms, setMs] = useState(null) // null = rest (end state)
   const [run, setRun] = useState(false)
-  const total = (CAP / TPS) * 1000
+  const total = (DEMO[0][2] / TPS) * 1000
   useEffect(() => {
     const load = new IntersectionObserver(([e]) => { if (e.isIntersecting) { load.disconnect(); import('./demo9.json').then((m) => setData(m.default)).catch(() => {}) } }, { rootMargin: '600px' })
     const view = new IntersectionObserver(([e]) => { if (e.isIntersecting) { view.disconnect(); setSeen(true) } }, { threshold: 0.35 })
@@ -60,6 +63,7 @@ function Demo() {
         })}
       </div>
       <div className="demo__foot">
+        <p className="demo__note">One of the 500 problems, picked by a fixed rule set before reading any answers: both answers correct, neither hit the token cap, short problem, token cut closest to the median of all 500.</p>
         <button type="button" className="demo__btn" onClick={run ? () => setRun(false) : play}>{run ? 'Pause' : ms == null ? 'Replay' : 'Play'}</button>
       </div>
     </div>
