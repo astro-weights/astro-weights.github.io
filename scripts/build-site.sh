@@ -116,6 +116,7 @@ NOTFOUND
   echo '<?xml version="1.0" encoding="UTF-8"?>'
   echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
   echo "<url><loc>$DOMAIN/</loc></url>"
+  (cd dist && find adapters -name index.html | sort) | sed "s|index\.html$||; s|.*|<url><loc>$DOMAIN/&</loc></url>|"
   for map in _site/docs/sitemap.xml _site/blog/sitemap.xml; do
     [ -f "$map" ] && grep -o '<loc>[^<]*</loc>' "$map" | sed 's|.*|<url>&</url>|'
   done
@@ -134,6 +135,7 @@ ROBOTS
 for f in sitemap.xml robots.txt llms.txt; do
   [ -s "_site/$f" ] || { echo "missing _site/$f" >&2; exit 1; }
 done
+grep -q "<loc>$DOMAIN/adapters/</loc>" _site/sitemap.xml || { echo "sitemap.xml lacks adapter URLs" >&2; exit 1; }
 grep -q "<loc>$DOMAIN/docs/</loc>" _site/sitemap.xml || { echo "sitemap.xml lacks docs URLs" >&2; exit 1; }
 if [ -n "$BLOG" ]; then
   grep -q "<loc>$DOMAIN/blog/" _site/sitemap.xml || { echo "sitemap.xml lacks blog URLs" >&2; exit 1; }

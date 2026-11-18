@@ -3,6 +3,7 @@ import logo from '/shared/logo.svg'
 import { initStory } from './story.js'
 import Counter from './rb/Counter.jsx'
 import DecryptedText from './rb/DecryptedText.jsx'
+import { AdaptersBlock, Hub, isHub } from './Adapters.jsx'
 
 const DOCS = 'https://astro-weights.dev/docs/'
 const GITHUB = 'https://github.com/astro-weights/astro-weights'
@@ -410,10 +411,11 @@ function Footer() {
       <div className="wrap foot__in">
         <div className="foot__id">
           <img src={logo} width="40" height="40" alt="astro-weights astronaut logo" />
-          <a className="word" href="#drift">astro-weights</a>
+          <a className="word" href={isHub() ? '/' : '#drift'}>astro-weights</a>
         </div>
         <nav aria-label="Footer">
           <a href={DOCS}>Docs</a>
+          <a href="/adapters/">Adapters</a>
           <a href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a href={PYPI}>PyPI</a>
@@ -427,23 +429,28 @@ function Footer() {
 }
 
 export default function App() {
+  const hub = isHub()
   return (
     <>
-      <header className="top">
-        <a className="word" href="#drift">astro-weights</a>
+      <header className={'top' + (hub ? ' top--hub' : '')}>
+        <a className="word" href={hub ? '/' : '#drift'}>astro-weights</a>
         <nav aria-label="Main">
-          <a href={DOCS}>Docs</a>
+          <a className="nav-d" href={DOCS}>Docs</a>
+          <a href="/adapters/" aria-current={hub ? (location.pathname === '/adapters/' ? 'page' : 'true') : undefined}>Adapters</a>
           <a className="nav-x" href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a className="nav-x" href={PYPI}>PyPI</a>
         </nav>
       </header>
-      <main>
-      <Story />
-      <Results />
-      <More />
-      <End />
-      </main>
+      {hub ? <Hub /> : (
+        <main>
+          <Story />
+          <Results />
+          <AdaptersBlock />
+          <More />
+          <End />
+        </main>
+      )}
       <Footer />
       <Consent />
     </>
