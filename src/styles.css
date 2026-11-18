@@ -386,8 +386,9 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .demo__col--edit .demo__bar i { background: var(--violet); }
 .demo__col--edit .demo__end { background: var(--violet-deep); color: #fff; }
 .demo__foot { margin-top: 10px; }
-.demo__btn { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--link); font: 600 0.9375rem/1 var(--display); cursor: pointer; }
-.demo__btn:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.demo__btn, .demo__tog { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--link); font: 600 0.9375rem/1 var(--display); cursor: pointer; }
+.demo__btn:hover, .demo__tog:hover { text-decoration: underline; text-underline-offset: 4px; }
 @media (min-width: 860px) {
   .demo__cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .demo__col { padding-right: 28px; }
@@ -395,6 +396,30 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
   .demo__panel { --lines: 9; }
 }
 @media (prefers-reduced-motion: reduce) { .demo__btn { display: none; } }
+.demo__tog, .demo__plabel { display: none; }
+/* phone: base | adapter side by side (name, bar, count, outcome), then Play + answers toggle, then the two answers full width.
+   .demo becomes the grid; the cols wrappers dissolve into it so the toggle sits above the answers it opens (opening moves nothing above it) */
+@media (max-width: 700px) {
+  .demo { margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; align-content: start; }
+  .demo__problem { grid-row: 1; grid-column: 1 / -1; margin-bottom: 14px; }
+  .demo__problem blockquote { padding: 10px 12px; }
+  .demo__cols, .demo__col { display: contents; }
+  .demo__col > * { grid-column: 1; }
+  .demo__col--edit > * { grid-column: 2; }
+  .demo__who { grid-row: 2; font-size: 1.1rem; }
+  .demo__bar { grid-row: 3; }
+  .demo__count--big { grid-row: 4; flex-direction: column; align-items: flex-start; gap: 2px; margin-top: 8px; }
+  .demo__end { grid-row: 5; margin-top: 8px; }
+  .demo__foot { grid-row: 6; grid-column: 1 / -1; margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .demo__tog { display: block; }
+  .demo__ans { display: none; grid-column: 1 / -1; grid-row: 7; overflow-anchor: none; }
+  .demo__col--edit > .demo__ans { grid-column: 1 / -1; grid-row: 8; }
+  .demo--open .demo__ans { display: block; margin-top: 16px; }
+  .demo__plabel { display: block; font: 500 0.875rem/1.3 var(--display); color: var(--dim); }
+  .demo__col--edit .demo__plabel { color: var(--link); }
+  .demo__panel { --lines: 6; margin-top: 4px; }
+  .car__nav { margin-bottom: 12px; }
+}
 
 /* ---------- results carousel (mock 12) ---------- */
 .nb { white-space: nowrap; }
