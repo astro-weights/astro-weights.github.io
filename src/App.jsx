@@ -25,8 +25,9 @@ const DEMO = [['Base model', 'base', 1138, 'Finished in 1,138 tokens, correct'],
 // Slides: 27B (headline run) and 9B. 9B pair = MATH-500 item math500-120 from an earlier Qwen3.5-9B run, picked for a large
 // saving, NOT typical; nothing on the slide says so (user order 2026-11-17, risk accepted). 9B line = claims sheet C6 (held-out,
 // n=244), without C6's CI or the C9 GSM8K loss (user order). Wording: vault Brand/Landing claim wording 0.1, "Carousel 9B slide".
+// Order + set = user order 2026-11-17. BigCodeBench pair = Research "largest cut among problems both solved" (BigCodeBench/595, typical
+// cut 9%); user ordered the bars, source note and "largest cut" caption off the slide, so nothing on it says the pair is not typical.
 const SLIDES = [
-  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on <span className="nb">MATH-500</span>. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
   {
     tab: '9B · MATH-500',
     lead: <>9B adapter: about <mark>10%</mark> fewer tokens on <span className="nb">held-out</span> <span className="nb">MATH-500</span> (n=244).</>,
@@ -34,84 +35,15 @@ const SLIDES = [
     tps: CAP / 20, load: () => import('./demo9b.json'),
     cols: [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']],
   },
-  // MOCK (?mock=slides): candidate slides from Research 2026-11-17, copy DRAFT for Marketing, not live. Bars: [label, value text, width 0..1, edit?]
-  ...(new URLSearchParams(location.search).get('mock') === 'slides' ? [
-    {
-      tab: '27B · GSM8K',
-      lead: <>27B adapter: about <mark>−30%</mark> tokens on <span className="nb">held-out</span> GSM8K. Accuracy 97.0% both ways.</>,
-      problem: "Every 2 miles a car drives the tires rotate 725 times. Jeremy drives 400 miles a month. If each tire can undergo 10,440,000 rotations how many years before the tire needs to be replaced?",
-      tps: TPS, load: () => import('./demoGsm.json'),
-      cols: [['Base model', 'base', 516, 'Finished in 516 tokens, correct'], ['With adapter', 'edit', 407, 'Finished in 407 tokens, correct']],
-      note: '300 held-out problems. Token change −30.2%; accuracy change 0.00 pp (95% CI −1.31 to +1.31). Neither run hit the token cap. H100/H200 GPUs, bf16 transformers.',
-    },
-    {
-      tab: '27B · MATH-500 · vs prompt',
-      lead: <>On <span className="nb">MATH-500</span>, the 27B adapter cuts more tokens than a <span className="nb">“Be concise”</span> prompt: <mark>−28.5%</mark> against −18.8%.</>,
-      groups: [
-        ['Tokens per answer, base model = 100', [['Base model', '100', 1 / 1.027], ['Random direction (control)', '+2.7%, n.s.', 1], ['“Be concise” prompt', '−18.8%', 0.812 / 1.027], ['With adapter', '−28.5%', 0.715 / 1.027, 1]]],
-        ['Accuracy', [['Base model', '90.2%', 0.902], ['With adapter', '88.8%', 0.888, 1]]],
-      ],
-      problem: "A pirate searches seven islands for buried treasure. If each island has a $\\frac{1}{5}$ chance of having treasure, what is the probability that exactly 4 of the islands have treasure?",
-      tps: TPS, load: () => import('./demoMath5.json'),
-      cols: [['Base model', 'base', 911, 'Finished in 911 tokens, correct'], ['With adapter', 'edit', 646, 'Finished in 646 tokens, correct']],
-      note: 'All 500 problems, greedy decoding. Accuracy difference −1.4 pp is not statistically significant (p = 0.26). MATH-500 only: on code benchmarks the prompt cuts more than the adapter.',
-    },
-    {
-      tab: '27B · MBPP+',
-      lead: <>27B adapter on code: about <mark>−31%</mark> tokens on MBPP+. No accuracy change detected.</>,
-      cap: 'Largest cut among problems both solved; typical problem: −23%',
-      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\n\"\"\"\nWrite a python function to find the sum of all odd length subarrays. \nassert odd_length_sum([1,2,4]) == 14\n\"\"\"\n```",
-      tps: TPS * 1, load: () => import('./demoMbppMax.json'),
-      cols: [['Base model', 'base', 1622, 'Finished in 1,622 tokens, tests pass'], ['With adapter', 'edit', 600, 'Finished in 600 tokens, tests pass']],
-      note: '378 problems. Pass rate 77.3% against 76.7%; the difference is not statistically significant (p = 0.80).',
-    },
-    {
-      tab: '27B · BigCodeBench',
-      lead: <>27B adapter on BigCodeBench: about <mark>−15%</mark> tokens. No accuracy change detected.</>,
-      groups: [
-        ['Mean tokens per answer', [['Base model', '392.4', 1], ['With adapter', '334.8', 334.8 / 392.4, 1]]],
-        ['Tests passed', [['Base model', '52.5%', 0.525], ['With adapter', '51.8%', 0.518, 1]]],
-      ],
-      cap: 'Largest cut among problems both solved; typical problem: −9%',
-      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\nGenerates 'n' random integer numbers such that their sum equals 'total', sorts these numbers, and determines the position where a new random number can be inserted to maintain the sorted order. The function uses a retry mechanism to ensure the generated numbers sum up to 'total'.\nThe function should output with:\n    tuple: A tuple containing the sorted numbers as an array and the insertion position for a new number.\nYou should write self-contained code starting with:\n```\nimport random\nimport bisect\nfrom array import array\ndef task_func(n=10, total=100):\n```",
-      tps: TPS * 1, load: () => import('./demoBcbMax.json'), limit: 2048,
-      cols: [['Base model', 'base', 723, 'Finished in 723 tokens, tests pass'], ['With adapter', 'edit', 442, 'Finished in 442 tokens, tests pass']],
-      note: 'BigCodeBench Instruct, 1,129 tasks, greedy decoding. Token change −14.7%; pass-rate difference −0.7 pp is not statistically significant (p = 0.48). Neither run hit the token cap.',
-    },
-    {
-      tab: '27B · HumanEval+',
-      lead: <>27B adapter on HumanEval+: about <mark>−11%</mark> tokens. No accuracy change detected.</>,
-      groups: [
-        ['Mean tokens per answer', [['Base model', '268.9', 1], ['With adapter', '239.6', 239.6 / 268.9, 1]]],
-        ['Tests passed', [['Base model', '91.5%', 0.915], ['With adapter', '90.9%', 0.909, 1]]],
-      ],
-      cap: 'Largest cut among problems both solved; typical problem: 0% (most answers unchanged)',
-      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\ndef is_multiply_prime(a):\n    \"\"\"Write a function that returns true if the given number is the multiplication of 3 prime numbers\n    and false otherwise.\n    Knowing that (a) is less then 100. \n    Example:\n    is_multiply_prime(30) == True\n    30 = 2 * 3 * 5\n    \"\"\"\n```",
-      tps: TPS * 1, load: () => import('./demoHeMax.json'), limit: 2048,
-      cols: [['Base model', 'base', 336, 'Finished in 336 tokens, tests pass'], ['With adapter', 'edit', 248, 'Finished in 248 tokens, tests pass']],
-      note: '164 tasks, greedy decoding. Token change −10.9%; pass-rate difference −0.6 pp is not statistically significant (p = 1.0). Neither run hit the token cap. On a typical task the answer is unchanged; the saving comes from a minority of tasks.',
-    },
-  ] : []),
+  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on <span className="nb">MATH-500</span>. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
+  {
+    tab: '27B · BigCodeBench',
+    lead: <>27B adapter on BigCodeBench: about <mark>−15%</mark> tokens. No accuracy change detected.</>,
+    problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\nGenerates 'n' random integer numbers such that their sum equals 'total', sorts these numbers, and determines the position where a new random number can be inserted to maintain the sorted order. The function uses a retry mechanism to ensure the generated numbers sum up to 'total'.\nThe function should output with:\n    tuple: A tuple containing the sorted numbers as an array and the insertion position for a new number.\nYou should write self-contained code starting with:\n```\nimport random\nimport bisect\nfrom array import array\ndef task_func(n=10, total=100):\n```",
+    tps: TPS * 1, load: () => import('./demoBcbMax.json'), limit: 2048,
+    cols: [['Base model', 'base', 723, 'Finished in 723 tokens, tests pass'], ['With adapter', 'edit', 442, 'Finished in 442 tokens, tests pass']],
+  },
 ]
-
-// Slide without a live demo pair: labelled bars + one source note.
-const Bars = ({ s }) => (
-  <div className="bars">
-    {s.groups.map(([title, rows]) => (
-      <dl className="bars__g" key={title}>
-        <dt className="demo__label">{title}</dt>
-        {rows.map(([who, val, w, edit]) => (
-          <dd className={'bars__row' + (edit ? ' bars__row--edit' : '')} key={who}>
-            <span className="bars__who">{who}</span>
-            <i className="demo__bar"><i style={{ '--w': w }} /></i>
-            <b>{val}</b>
-          </dd>
-        ))}
-      </dl>
-    ))}
-    <p className="bars__note">{s.note}</p>
-  </div>
-)
 
 // One slide's demo: runs only while on screen (stops and resets when its slide leaves).
 function Pair({ s, onDone }) {
@@ -143,7 +75,7 @@ function Pair({ s, onDone }) {
   return (
     <div className={'demo' + (open ? ' demo--open' : '')} ref={root}>
       <div className="demo__problem">
-        <p className="demo__label">Same problem{s.cap && <span className="demo__cap"> · {s.cap}</span>}</p>
+        <p className="demo__label">Same problem</p>
         <blockquote>{s.problem}</blockquote>
       </div>
       <div className="demo__cols">
@@ -175,9 +107,7 @@ function Pair({ s, onDone }) {
 const Face = ({ s, onDone }) => (
   <>
     <p className="results__lead">{s.lead}</p>
-    {s.groups && <Bars s={s} />}
-    {s.cols && <Pair s={s} onDone={onDone} />}
-    {s.cols && !s.groups && s.note && <p className="bars__note" style={{ marginTop: 16 }}>{s.note}</p>}
+    <Pair s={s} onDone={onDone} />
   </>
 )
 
