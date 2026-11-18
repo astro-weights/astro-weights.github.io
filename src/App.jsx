@@ -34,7 +34,56 @@ const SLIDES = [
     tps: CAP / 20, load: () => import('./demo9b.json'),
     cols: [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']],
   },
+  // MOCK (?mock=slides): candidate slides from Research 2026-11-17, copy DRAFT for Marketing, not live. Bars: [label, value text, width 0..1, edit?]
+  ...(new URLSearchParams(location.search).get('mock') === 'slides' ? [
+    {
+      tab: '27B · GSM8K',
+      lead: <>27B adapter: about <mark>−30%</mark> tokens on <span className="nb">held-out</span> GSM8K. Accuracy 97.0% both ways.</>,
+      groups: [
+        ['Mean tokens per answer', [['Base model', '476.8', 1], ['With adapter', '332.8', 332.8 / 476.8, 1]]],
+        ['Accuracy', [['Base model', '97.0%', 0.97], ['With adapter', '97.0%', 0.97, 1]]],
+      ],
+      note: '300 held-out problems. Token change −30.2%; accuracy change 0.00 pp (95% CI −1.31 to +1.31). Neither run hit the token cap. H100/H200 GPUs, bf16 transformers.',
+    },
+    {
+      tab: '27B · MATH-500 · vs prompt',
+      lead: <>On <span className="nb">MATH-500</span>, the 27B adapter cuts more tokens than a <span className="nb">“Be concise”</span> prompt: <mark>−28.5%</mark> against −18.8%.</>,
+      groups: [
+        ['Tokens per answer, base model = 100', [['Base model', '100', 1 / 1.027], ['Random direction (control)', '+2.7%, n.s.', 1], ['“Be concise” prompt', '−18.8%', 0.812 / 1.027], ['With adapter', '−28.5%', 0.715 / 1.027, 1]]],
+        ['Accuracy', [['Base model', '90.2%', 0.902], ['With adapter', '88.8%', 0.888, 1]]],
+      ],
+      note: 'All 500 problems, greedy decoding. Accuracy difference −1.4 pp is not statistically significant (p = 0.26). MATH-500 only: on code benchmarks the prompt cuts more than the adapter.',
+    },
+    {
+      tab: '27B · MBPP+',
+      lead: <>27B adapter on code: about <mark>−31%</mark> tokens on MBPP+. No accuracy change detected.</>,
+      groups: [
+        ['Tokens per answer, base model = 100', [['Base model', '100', 1], ['With adapter', '−31.0%', 0.69, 1]]],
+        ['Accuracy', [['Base model', '77.3%', 0.773], ['With adapter', '76.7%', 0.767, 1]]],
+      ],
+      note: '378 problems. Accuracy difference is not statistically significant (p = 0.80).',
+    },
+  ] : []),
 ]
+
+// Slide without a live demo pair: labelled bars + one source note.
+const Bars = ({ s }) => (
+  <div className="bars">
+    {s.groups.map(([title, rows]) => (
+      <dl className="bars__g" key={title}>
+        <dt className="demo__label">{title}</dt>
+        {rows.map(([who, val, w, edit]) => (
+          <dd className={'bars__row' + (edit ? ' bars__row--edit' : '')} key={who}>
+            <span className="bars__who">{who}</span>
+            <i className="demo__bar"><i style={{ '--w': w }} /></i>
+            <b>{val}</b>
+          </dd>
+        ))}
+      </dl>
+    ))}
+    <p className="bars__note">{s.note}</p>
+  </div>
+)
 
 // One slide's demo: runs only while on screen (stops and resets when its slide leaves).
 function Pair({ s }) {
@@ -98,7 +147,7 @@ function Pair({ s }) {
 const Face = ({ s }) => (
   <>
     <p className="results__lead">{s.lead}</p>
-    <Pair s={s} />
+    {s.groups ? <Bars s={s} /> : <Pair s={s} />}
   </>
 )
 

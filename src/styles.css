@@ -496,3 +496,16 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
   .code--out { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
   .foot__legal a { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* ---------- MOCK ?mock=slides: stat slides (bars, no demo pair) ---------- */
+.car__nav { flex-wrap: wrap; }
+.bars { margin-top: 28px; display: grid; gap: 28px 56px; max-width: 60rem; }
+@media (min-width: 860px) { .bars { grid-template-columns: 3fr 2fr; } .bars__note { grid-column: 1 / -1; } }
+.bars__g { margin: 0; }
+.bars__row { margin: 12px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: baseline; }
+.bars__row .demo__bar { grid-column: 1 / -1; grid-row: 2; }
+.bars__who { color: var(--dim); }
+.bars__row b { font: 600 1.15rem/1.2 var(--display); font-variant-numeric: tabular-nums; }
+.bars__row--edit .bars__who, .bars__row--edit b { color: var(--violet-light); }
+.bars__row--edit .demo__bar i { background: var(--violet); }
+.bars__note { color: var(--dim); font-size: 0.875rem; max-width: 46rem; }
