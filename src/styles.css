@@ -510,3 +510,82 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
   /* story.js sets --hero (1 on the first screen, 0 from Burn on), --hero-dy and --hero-s (band position and size) */
   .pin .bd { transform-origin: 50% 33%; transform: translate3d(0, calc(var(--hero, 0) * var(--hero-dy, 0px)), 0) scale(calc(1 - var(--hero, 0) * (1 - var(--hero-s, 1)))); }
 }
+
+/* ---------- pretrained adapters: landing block (tabs + run snippet) and /adapters/ hub ---------- */
+.adp { min-width: 0; }
+.adp-label { font: 500 0.78rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+.adp-lead { margin-top: 18px; max-width: 22em; font: 600 clamp(1.6rem, 1rem + 2vw, 2.6rem)/1.15 var(--display); letter-spacing: -0.015em; text-wrap: balance; }
+.adp-lead mark { padding: 0 0.16em; border-radius: 3px; background: var(--violet-deep); color: #fff; }
+.adp-note { font-size: 0.875rem; line-height: 1.55; color: var(--dim); }
+
+/* adapter tabs: wrap, no scrolling strip */
+.adp-tabrow { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
+.adp-tabs { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.adp-tabs [role="tab"] { min-height: 44px; padding: 0 14px; background: none; border: 1px solid var(--line); border-radius: 4px; color: var(--dim); font: 500 0.875rem/1 var(--mono); cursor: pointer; text-align: left; transition: color 0.15s, border-color 0.15s; }
+.adp-tabs [role="tab"][aria-selected="true"] { color: var(--text); border-color: var(--link); box-shadow: inset 0 -2px 0 var(--link); }
+@media (hover: hover) { .adp-tabs [role="tab"]:hover { color: var(--text); } }
+@media (prefers-reduced-motion: reduce) { .adp-tabs [role="tab"] { transition: none; } }
+.adp-all { display: inline-flex; align-items: center; min-height: 44px; color: var(--link); font-weight: 600; text-underline-offset: 3px; }
+@media (max-width: 639px) { .adp-tabs { flex-direction: column; width: 100%; } .adp-tabs [role="tab"] { width: 100%; } }
+
+/* panel: stats left, code right (container query so it also works beside the hub rail) */
+.adp-pw { container-type: inline-size; margin-top: 12px; min-width: 0; padding: clamp(20px, 3vw, 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; }
+.adp-pname { font: 600 clamp(1.3rem, 1rem + 1vw, 1.7rem)/1.15 var(--display); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.adp-panel { margin-top: 20px; display: grid; gap: 24px; }
+@container (min-width: 720px) { .adp-panel { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; } }
+.adp-stats { min-width: 0; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.adp-stats dt { font: 500 0.75rem/1.3 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.adp-stats dd { margin: 0; }
+.adp-stats b { display: block; margin-top: 6px; font: 600 clamp(3rem, 2rem + 4vw, 4.75rem)/0.95 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.adp-stats dd span { display: block; margin-top: 10px; font: 400 0.8rem/1.4 var(--mono); color: var(--dim); }
+
+/* code panel */
+.adp-get { min-width: 0; }
+.adp-code { min-width: 0; background: var(--space); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.adp-code__bar { display: flex; align-items: stretch; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.adp-code [role="tablist"] { display: flex; flex-wrap: wrap; min-width: 0; }
+.adp-code [role="tab"] { min-height: 48px; padding: 0 16px; background: none; border: 0; color: var(--dim); font: 500 0.875rem/1 var(--mono); cursor: pointer; }
+.adp-code [role="tab"][aria-selected="true"] { color: var(--text); box-shadow: inset 0 -2px 0 var(--link); }
+.adp-code .code { margin: 0; border: 0; border-radius: 0; background: transparent; }
+@media (max-width: 639px) { .adp-code .code { font-size: 0.78rem; padding: 16px; } }
+.adp-links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 0 24px; align-items: center; min-height: 44px; }
+.adp-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--link); font-weight: 600; text-underline-offset: 3px; }
+
+/* hub */
+.adp-h1 { margin-bottom: 28px; font: 600 clamp(2.2rem, 1.4rem + 3vw, 3.6rem)/1.05 var(--display); letter-spacing: -0.02em; }
+.adp-hub { display: grid; gap: 20px; align-items: start; }
+.adp-rail { display: none; }
+.adp-pick { display: grid; gap: 8px; font: 500 0.78rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.adp-pick select { width: 100%; min-height: 48px; padding: 0 12px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: 400 1rem/1 inherit; font-family: inherit; letter-spacing: 0; text-transform: none; }
+@media (min-width: 900px) {
+  .adp-hub { grid-template-columns: 280px minmax(0, 1fr); gap: 32px; }
+  .adp-pick { display: none; }
+  .adp-rail { display: block; position: sticky; top: 72px; }
+}
+.adp-rail section + section { margin-top: 24px; }
+.adp-rail h2 { margin-bottom: 8px; font: 500 0.75rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+.adp-rail ul { list-style: none; padding: 0; border-left: 1px solid var(--line); }
+.adp-rail a { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; margin-left: -1px; border-left: 2px solid transparent; color: var(--dim); text-decoration: none; font-size: 0.9rem; line-height: 1.3; }
+.adp-rail a[aria-current="page"] { color: var(--text); border-left-color: var(--link); background: rgb(242 244 248 / 0.04); }
+@media (hover: hover) { .adp-rail a:hover { color: var(--text); } }
+.adp-rail__name { overflow-wrap: anywhere; }
+.adp-rail__tok { font: 600 0.9rem/1.3 var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.adp-main { min-width: 0; }
+.adp-main .adp-pw { margin-top: 0; }
+.adp-evals { margin-top: 36px; }
+.adp-evals h3 { margin-bottom: 14px; font: 600 1.5rem/1.1 var(--display); letter-spacing: -0.01em; }
+.adp-evals .adp-note { margin-top: 14px; max-width: 52em; }
+
+/* table: scrolls inside its own box */
+.adp-tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+.adp-table { width: 100%; min-width: 660px; border-collapse: collapse; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.adp-table th, .adp-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.adp-table thead th { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); background: var(--panel); }
+.adp-table tbody th { font-weight: 500; }
+.adp-table tbody tr:last-child > * { border-bottom: 0; }
+.top--hub { position: sticky; top: 0; background: rgb(13 17 23 / 0.92); border-bottom: 1px solid var(--line); }
+.top nav a[aria-current] { color: var(--text); }
+.top nav a[aria-current]::after { transform: scaleX(1); }
+.hub { min-height: 80svh; padding: 40px 0 72px; }
+/* narrow phones: wordmark, Adapters, GitHub. Docs stays reachable from the hero button and the footer. */
+@media (max-width: 419px) { .top .word { white-space: nowrap; } .top nav .nav-d { display: none; } }
