@@ -59,9 +59,10 @@ const SLIDES = [
     {
       tab: '27B · MBPP+',
       lead: <>27B adapter on code: about <mark>−31%</mark> tokens on MBPP+. No accuracy change detected.</>,
-      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\n\"\"\"\nWrite a function to find the lateral surface area of a cube given its side length.\nassert lateralsurface_cube(5)==100\n\"\"\"\n```",
-      tps: TPS, load: () => import('./demoMbpp.json'),
-      cols: [['Base model', 'base', 132, 'Finished in 132 tokens, tests pass'], ['With adapter', 'edit', 102, 'Finished in 102 tokens, tests pass']],
+      cap: 'Largest cut among problems both solved; typical problem: −23%',
+      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\n\"\"\"\nWrite a python function to find the sum of all odd length subarrays. \nassert odd_length_sum([1,2,4]) == 14\n\"\"\"\n```",
+      tps: TPS * 1, load: () => import('./demoMbppMax.json'),
+      cols: [['Base model', 'base', 1622, 'Finished in 1,622 tokens, tests pass'], ['With adapter', 'edit', 600, 'Finished in 600 tokens, tests pass']],
       note: '378 problems. Pass rate 77.3% against 76.7%; the difference is not statistically significant (p = 0.80).',
     },
     {
@@ -71,6 +72,10 @@ const SLIDES = [
         ['Mean tokens per answer', [['Base model', '392.4', 1], ['With adapter', '334.8', 334.8 / 392.4, 1]]],
         ['Tests passed', [['Base model', '52.5%', 0.525], ['With adapter', '51.8%', 0.518, 1]]],
       ],
+      cap: 'Largest cut among problems both solved; typical problem: −9%',
+      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\nGenerates 'n' random integer numbers such that their sum equals 'total', sorts these numbers, and determines the position where a new random number can be inserted to maintain the sorted order. The function uses a retry mechanism to ensure the generated numbers sum up to 'total'.\nThe function should output with:\n    tuple: A tuple containing the sorted numbers as an array and the insertion position for a new number.\nYou should write self-contained code starting with:\n```\nimport random\nimport bisect\nfrom array import array\ndef task_func(n=10, total=100):\n```",
+      tps: TPS * 1, load: () => import('./demoBcbMax.json'), limit: 2048,
+      cols: [['Base model', 'base', 723, 'Finished in 723 tokens, tests pass'], ['With adapter', 'edit', 442, 'Finished in 442 tokens, tests pass']],
       note: 'BigCodeBench Instruct, 1,129 tasks, greedy decoding. Token change −14.7%; pass-rate difference −0.7 pp is not statistically significant (p = 0.48). Neither run hit the token cap.',
     },
     {
@@ -80,6 +85,10 @@ const SLIDES = [
         ['Mean tokens per answer', [['Base model', '268.9', 1], ['With adapter', '239.6', 239.6 / 268.9, 1]]],
         ['Tests passed', [['Base model', '91.5%', 0.915], ['With adapter', '90.9%', 0.909, 1]]],
       ],
+      cap: 'Largest cut among problems both solved; typical problem: 0% (most answers unchanged)',
+      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\ndef is_multiply_prime(a):\n    \"\"\"Write a function that returns true if the given number is the multiplication of 3 prime numbers\n    and false otherwise.\n    Knowing that (a) is less then 100. \n    Example:\n    is_multiply_prime(30) == True\n    30 = 2 * 3 * 5\n    \"\"\"\n```",
+      tps: TPS * 1, load: () => import('./demoHeMax.json'), limit: 2048,
+      cols: [['Base model', 'base', 336, 'Finished in 336 tokens, tests pass'], ['With adapter', 'edit', 248, 'Finished in 248 tokens, tests pass']],
       note: '164 tasks, greedy decoding. Token change −10.9%; pass-rate difference −0.6 pp is not statistically significant (p = 1.0). Neither run hit the token cap. On a typical task the answer is unchanged; the saving comes from a minority of tasks.',
     },
   ] : []),
@@ -134,7 +143,7 @@ function Pair({ s, onDone }) {
   return (
     <div className={'demo' + (open ? ' demo--open' : '')} ref={root}>
       <div className="demo__problem">
-        <p className="demo__label">Same problem</p>
+        <p className="demo__label">Same problem{s.cap && <span className="demo__cap"> · {s.cap}</span>}</p>
         <blockquote>{s.problem}</blockquote>
       </div>
       <div className="demo__cols">
@@ -144,8 +153,8 @@ function Pair({ s, onDone }) {
           return (
             <div className={'demo__col' + (i ? ' demo__col--edit' : '')} key={key}>
               <p className="demo__who">{who}</p>
-              <i className="demo__bar"><i style={{ '--w': n / CAP }} /></i>
-              <p className="demo__count demo__count--big"><b>{tok(n)}</b><span>tokens of {tok(CAP)} cap</span></p>
+              <i className="demo__bar"><i style={{ '--w': n / (s.limit || CAP) }} /></i>
+              <p className="demo__count demo__count--big"><b>{tok(n)}</b><span>tokens of {tok(s.limit || CAP)} cap</span></p>
               <div className="demo__ans" id={uid + key}>
                 <p className="demo__plabel">{who}</p>
                 <div className="demo__panel" data-rest={ms == null || !run || undefined} tabIndex={0} role="group" aria-label={who + ' answer'}><pre>{text.slice(0, Math.floor((n * text.length) / end))}</pre></div>
