@@ -481,3 +481,18 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .end .actions { margin-top: 16px; }
 .end__status { margin-top: 24px; color: var(--dim); font: 500 0.875rem/1.4 var(--mono); }
 @media (max-width: 859px) { .end .install { display: flex; } .end .install code { flex: 1; min-width: 0; } .end .actions .btn { flex: 1; } }
+
+/* ---------- phone pass: tap targets, 12px floor, code that fits ---------- */
+@media (max-width: 639px) {
+  .readout__scope, .readout dt { font-size: 0.75rem; letter-spacing: 0.04em; }
+  .readout dd a { display: inline-flex; align-items: center; min-height: 44px; }
+  .steps li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); padding: 12px 0 14px; }
+  .steps__n { grid-row: span 2; padding-top: 6px; }
+  .steps h3 { margin-top: 0; }
+  /* python wraps with a hanging indent; the inspect table keeps its columns and scrolls, fading at the edge it runs off */
+  .quick__pair .code:not(.code--out) code { width: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .quick__pair .code:not(.code--out) .ln { padding-left: 1.5em; text-indent: -1.5em; }
+  .quick__pair .code:not(.code--out) .ln--hl { padding-left: calc(16px + 1.5em); }
+  .code--out { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+  .foot__legal a { display: inline-flex; align-items: center; min-height: 44px; }
+}
