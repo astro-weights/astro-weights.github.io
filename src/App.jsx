@@ -169,9 +169,10 @@ const LAYER = 'model.layers.1.mlp.down_proj'
 
 const AREAS = [
   ['Edit core', 'Build low-rank edits, save and load them as PEFT LoRA adapters, apply them to transformers models, remove them again. Base weights are never modified.'],
-  ['Export', 'llama.cpp GGUF adapter and a model card.'],
+  ['Export', 'llama.cpp GGUF adapter, a merged GGUF from a base GGUF, and a model card.'],
   ['Directions', 'Difference-of-means directions with a split-half gate.'],
   ['Eval', 'A runner with graders, and paired eval statistics: base vs edit on the same items.'],
+  ['Agent', <>An MCP server gives an agent a sandboxed numpy kernel and forward passes on base or edited weights, inside a budget. <code>astro-weights run CONFIG.toml</code> drives a whole run and exports the adapter.</>],
 ]
 
 const CODE = `import numpy as np
@@ -353,7 +354,7 @@ function Story() {
 }
 
 
-// Real output of the Quick look code, then `astro-weights inspect my-edit` (astro-weights 0.1.2, run 2026-11-17)
+// Real output of the Quick look code, then `astro-weights inspect my-edit` (astro-weights 0.1.2, run 2026-11-17; output unchanged in 0.2.0 per Engineering)
 const INSPECT = `$ astro-weights inspect my-edit
 base model: org/name
 rank: 1
