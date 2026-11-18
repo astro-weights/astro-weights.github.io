@@ -39,10 +39,9 @@ const SLIDES = [
     {
       tab: '27B · GSM8K',
       lead: <>27B adapter: about <mark>−30%</mark> tokens on <span className="nb">held-out</span> GSM8K. Accuracy 97.0% both ways.</>,
-      groups: [
-        ['Mean tokens per answer', [['Base model', '476.8', 1], ['With adapter', '332.8', 332.8 / 476.8, 1]]],
-        ['Accuracy', [['Base model', '97.0%', 0.97], ['With adapter', '97.0%', 0.97, 1]]],
-      ],
+      problem: "Every 2 miles a car drives the tires rotate 725 times. Jeremy drives 400 miles a month. If each tire can undergo 10,440,000 rotations how many years before the tire needs to be replaced?",
+      tps: TPS, load: () => import('./demoGsm.json'),
+      cols: [['Base model', 'base', 516, 'Finished in 516 tokens, correct'], ['With adapter', 'edit', 407, 'Finished in 407 tokens, correct']],
       note: '300 held-out problems. Token change −30.2%; accuracy change 0.00 pp (95% CI −1.31 to +1.31). Neither run hit the token cap. H100/H200 GPUs, bf16 transformers.',
     },
     {
@@ -148,6 +147,7 @@ const Face = ({ s }) => (
   <>
     <p className="results__lead">{s.lead}</p>
     {s.groups ? <Bars s={s} /> : <Pair s={s} />}
+    {s.cols && s.note && <p className="bars__note" style={{ marginTop: 16 }}>{s.note}</p>}
   </>
 )
 
