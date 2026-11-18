@@ -45,7 +45,7 @@ function adapterPages() {
       write('/adapters/', 'Ready-made LoRA adapters | astro-weights', 'Ready-made LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
       for (const a of adapters) {
         const h = a.headline
-        const tail = a.metaCaveat ? '; ' + a.metaCaveat : '' // a token claim that has a known cost travels with it (claims sheet C6/C9)
+        const tail = a.metaCaveat ? '; ' + a.metaCaveat : '' // a token claim with a known cost travels with it
         write(`/adapters/${a.slug}/`, `${a.name} | astro-weights adapters`, `${a.name}: ${pct(h.tokens)} tokens on ${h.bench}, n=${h.n}, paired against the base model${tail}. Load with ${a.use.map((u) => u.label).join(', ')}.`)
       }
     },

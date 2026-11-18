@@ -1,5 +1,6 @@
 // Ready-made adapters (Marketing word: edits are not trained): landing block (tabs, token change, run snippet) and the /adapters/ hub.
-// Data: src/adapters.json, copied from each adapter's public Hugging Face card. Add an adapter there; vite.config.js
+// Data: src/adapters.json, copied from each adapter's public Hugging Face card, except rows its evalNote says are not on the
+// card yet. Do not round, re-derive or add numbers there. Add an adapter there; vite.config.js
 // writes its page at /adapters/<slug>/. Minimal text by user order 2026-11-18: name, number, command, links.
 import { useId, useRef, useState } from 'react'
 import data from './adapters.json'

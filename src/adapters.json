@@ -1,5 +1,4 @@
 {
-  "_source": "Numbers copied from each adapter's public Hugging Face card (read 2026-11-18), except rows with a \"source\" field, which cite the vault claims sheet and the report file on glitch. Do not round, re-derive or add numbers here. PEFT snippets: Engineering 2026-11-18 (hq 56; the Hub cards' AutoModelForCausalLM line loads 0 adapter keys).",
   "adapters": [
     {
       "slug": "qwen3.8-27b-terse",
@@ -166,7 +165,7 @@
           2.5
         ]
       },
-      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown. All numbers were measured on the Q4_K_M GGUF (llama.cpp); the LoRA (vLLM, PEFT) applies the same change to bf16 weights and has not been benchmarked on its own. GSM8K (full) row: measured on bf16 weights with the LoRA (vLLM/PEFT path), not the GGUF; not on the Hugging Face card yet.",
+      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown. All rows except GSM8K (full) were measured on the Q4_K_M GGUF (llama.cpp). GSM8K (full) was measured on bf16 weights with the LoRA (vLLM/PEFT path) and is not on the Hugging Face card yet.",
       "evals": [
         {
           "mode": "Thinking off",
@@ -220,7 +219,6 @@
             -0.89
           ],
           "tokens": 1.2,
-          "source": "Claims sheet C9; glitch x9/gsm8k-full-card/report.txt; bf16 + LoRA",
           "dp": 2
         }
       ],
