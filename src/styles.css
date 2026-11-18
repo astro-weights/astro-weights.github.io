@@ -505,7 +505,7 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .hero-band { display: none; }
 @media (max-width: 859px) and (prefers-reduced-motion: no-preference) {
   .chapter--drift .copy-col { justify-content: flex-start; }
-  .hero-band { display: block; flex: 1 1 auto; align-self: stretch; min-height: 150px; margin: 18px 0 0; border-top: 1px solid var(--line); }
+  .hero-band { display: block; flex: 1 1 auto; align-self: stretch; min-height: 80px; margin: 18px 0 0; border-top: 1px solid var(--line); }
   .chapter--drift .readout { margin-top: 0; }
   /* story.js sets --hero (1 on the first screen, 0 from Burn on), --hero-dy and --hero-s (band position and size) */
   .pin .bd { transform-origin: 50% 33%; transform: translate3d(0, calc(var(--hero, 0) * var(--hero-dy, 0px)), 0) scale(calc(1 - var(--hero, 0) * (1 - var(--hero-s, 1)))); }
