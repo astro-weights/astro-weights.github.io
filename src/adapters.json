@@ -11,7 +11,7 @@
         "n": 244,
         "tokens": -29.9
       },
-      "evalNote": "Paired against the unedited base: same prompts, same sampling, vLLM in bf16. Accuracy differences in percentage points with 95% CIs. Thinking off uses a 4k-token budget; thinking on uses 16k.",
+      "evalNote": "Paired against the unedited base: same prompts, same sampling, vLLM in bf16. Accuracy differences in percentage points with 95% CIs. Thinking off uses a 4k-token budget; thinking on uses 16k. \"MATH fresh\" means MATH test problems that are not in MATH-500.",
       "evals": [
         {
           "mode": "Thinking off",
@@ -138,12 +138,10 @@
       "use": [
         {
           "label": "vLLM",
-          "lang": "bash",
           "code": "vllm serve Qwen/Qwen3.8-27B \\\n  --enable-lora --max-lora-rank 16 \\\n  --lora-modules terse=glitch401/qwen3.8-27B-terse \\\n  --reasoning-parser qwen3"
         },
         {
           "label": "PEFT",
-          "lang": "python",
           "code": "from transformers import AutoModelForCausalLM\nfrom peft import PeftModel\n\nmodel = AutoModelForCausalLM.from_pretrained(\"Qwen/Qwen3.8-27B\", torch_dtype=\"bfloat16\", device_map=\"auto\")\nmodel = PeftModel.from_pretrained(model, \"glitch401/qwen3.8-27B-terse\")"
         }
       ]
@@ -158,7 +156,7 @@
         "n": 244,
         "tokens": -10.5
       },
-      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown.",
+      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown. All numbers were measured on the Q4_K_M GGUF (llama.cpp); the LoRA (vLLM, PEFT) applies the same change to bf16 weights and has not been benchmarked on its own.",
       "evals": [
         {
           "mode": "Thinking off",
@@ -183,7 +181,7 @@
         },
         {
           "mode": "Thinking off",
-          "bench": "IFEval",
+          "bench": "IFEval (strict prompt-level)",
           "n": 200,
           "acc": -1.0,
           "se": 2.92,
@@ -206,17 +204,14 @@
       "use": [
         {
           "label": "llama.cpp",
-          "lang": "bash",
           "code": "llama-server -m qwen3.5-9B-terse-Q4_K_M.gguf -ngl 99 -c 8192"
         },
         {
           "label": "vLLM",
-          "lang": "bash",
           "code": "vllm serve Qwen/Qwen3.5-9B --enable-lora --max-lora-rank 16 \\\n  --lora-modules terse=glitch401/qwen3.5-9B-terse --reasoning-parser qwen3"
         },
         {
           "label": "PEFT",
-          "lang": "python",
           "code": "from transformers import AutoModelForCausalLM\nfrom peft import PeftModel\n\nmodel = AutoModelForCausalLM.from_pretrained(\"Qwen/Qwen3.5-9B\", torch_dtype=\"bfloat16\", device_map=\"auto\")\nmodel = PeftModel.from_pretrained(model, \"glitch401/qwen3.5-9B-terse\")"
         }
       ]

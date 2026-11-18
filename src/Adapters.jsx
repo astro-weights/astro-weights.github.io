@@ -9,15 +9,16 @@ const page = (a) => `/adapters/${a.slug}/`
 const HF = (repo) => 'https://huggingface.co/' + repo
 const pct = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + '%'
 const pp = (v) => (v > 0 ? '+' : v < 0 ? '−' : '+') + Math.abs(v).toFixed(1) + ' pp'
-const ci = (e) => (e.ci ? `[${pp(e.ci[0]).replace(' pp', '')}, ${pp(e.ci[1]).replace(' pp', '')}]` : e.se != null ? `SE ${e.se}` : '')
+const ci = (e) => (e.ci ? `[${pp(e.ci[0]).replace(' pp', '')}, ${pp(e.ci[1]).replace(' pp', '')}]` : e.se != null ? `SE ${e.se} pp` : '')
 
 export const isHub = () => location.pathname.startsWith('/adapters')
 
-// roving tabindex shared by both tablists: arrows, Home, End move focus and selection; nothing auto-advances
+// roving tabindex shared by both tablists: arrows (both axes: tabs stack on phones), Home, End move focus and selection; nothing auto-advances
 function useTabKeys(n, i, setI) {
   const refs = useRef([])
   const onKeyDown = (e) => {
-    const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key]
+    const next = (i + 1) % n, prev = (i + n - 1) % n
+    const to = { ArrowRight: next, ArrowDown: next, ArrowLeft: prev, ArrowUp: prev, Home: 0, End: n - 1 }[e.key]
     if (to === undefined) return
     e.preventDefault(); setI(to); refs.current[to]?.focus()
   }
@@ -81,7 +82,7 @@ export function AdaptersBlock() {
   const [i, setI] = useState(0)
   const [ref, onKeyDown] = useTabKeys(shown.length, i, setI)
   return (
-    <section className="sec adp-sec" id="adapters" aria-labelledby="h-adp">
+    <section className="sec" id="adapters" aria-labelledby="h-adp">
       <div className="wrap adp">
         <h2 id="h-adp" className="adp-label">Pretrained adapters</h2>
         {/* DRAFT claim line (Marketing) */}
@@ -126,11 +127,6 @@ export function Hub() {
       <div className="wrap adp">
         <h1 className="adp-h1">Pretrained adapters</h1>
         <div className="adp-hub">
-          <label className="adp-pick">Adapter
-            <select value={cur.slug} onChange={(e) => location.assign(`/adapters/${e.target.value}/`)}>
-              {groups.map(([fam, list]) => <optgroup key={fam} label={fam}>{list.map((a) => <option key={a.slug} value={a.slug}>{a.name}</option>)}</optgroup>)}
-            </select>
-          </label>
           <nav className="adp-rail" aria-label="Adapters">
             {groups.map(([fam, list]) => (
               <section key={fam}>
@@ -138,7 +134,7 @@ export function Hub() {
                 <ul>
                   {list.map((a) => (
                     <li key={a.slug}>
-                      <a href={page(a)} aria-current={a.slug === cur.slug ? 'page' : undefined}>
+                      <a href={page(a)} aria-current={a.slug === slug ? 'page' : undefined}>
                         <span className="adp-rail__name">{a.name}</span>
                         <span className="adp-rail__tok">{pct(a.headline.tokens)}</span>
                       </a>

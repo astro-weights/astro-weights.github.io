@@ -25,24 +25,27 @@ function adapterPages() {
     name: 'adapter-pages',
     apply: 'build',
     writeBundle({ dir }) {
-      const { adapters } = JSON.parse(readFileSync('src/adapters.json', 'utf8'))
+      const { adapters } = JSON.parse(readFileSync(new URL('./src/adapters.json', import.meta.url), 'utf8'))
       if (!adapters?.length) throw new Error('src/adapters.json lists no adapters')
       const html = readFileSync(dir + '/index.html', 'utf8')
       const write = (path, title, desc) => {
-        let out = html
-          .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
-          .replace(/(<meta name="description" content=")[^"]*/, `$1${esc(desc)}`)
-          .replace(/(<meta property="og:title" content=")[^"]*/, `$1${esc(title)}`)
-          .replace(/(<meta property="og:description" content=")[^"]*/, `$1${esc(desc)}`)
-          .replace(/(<link rel="canonical" href=")[^"]*/, `$1${SITE}${path}`)
-          .replace(/(<meta property="og:url" content=")[^"]*/, `$1${SITE}${path}`)
+        const url = SITE + path
+        const out = html
+          .replace(/<title>[^<]*<\/title>/, () => `<title>${esc(title)}</title>`)
+          .replace(/(<meta name="description" content=")[^"]*/, (_, p) => p + esc(desc))
+          .replace(/(<meta property="og:title" content=")[^"]*/, (_, p) => p + esc(title))
+          .replace(/(<meta property="og:description" content=")[^"]*/, (_, p) => p + esc(desc))
+          .replace(/(<link rel="canonical" href=")[^"]*/, (_, p) => p + url)
+          .replace(/(<meta property="og:url" content=")[^"]*/, (_, p) => p + url)
+        // a reworded index.html head would otherwise ship every adapter page with the landing page's canonical URL
+        if (!out.includes(`<link rel="canonical" href="${url}">`) || !out.includes(`content="${url}"`) || !out.includes(`<title>${esc(title)}</title>`)) throw new Error('adapter-pages: head tags not rewritten for ' + path)
         mkdirSync(dir + path, { recursive: true })
         writeFileSync(dir + path + 'index.html', out)
       }
-      write('/adapters/', 'Pretrained adapters | astro-weights', 'Pretrained LoRA adapters made with astro-weights: paired evals against the base model and the command to load each one.')
+      write('/adapters/', 'Pretrained adapters | astro-weights', 'Pretrained LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
       for (const a of adapters) {
         const h = a.headline
-        write(`/adapters/${a.slug}/`, `${a.name} | astro-weights adapters`, `${a.name}: ${pct(h.tokens)} tokens on ${h.bench} (n ${h.n}), paired against the base model. LoRA adapter, load with ${a.use.map((u) => u.label).join(", ")}.`)
+        write(`/adapters/${a.slug}/`, `${a.name} | astro-weights adapters`, `${a.name}: ${pct(h.tokens)} tokens on ${h.bench}, n ${h.n}, paired against the base model. Load with ${a.use.map((u) => u.label).join(', ')}.`)
       }
     },
   }

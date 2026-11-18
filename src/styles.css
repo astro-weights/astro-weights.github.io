@@ -315,7 +315,7 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 /* Two alternating states from one focus value (story.js): READ at t = 0, 1, 2 (copy on screen, scene soft and dim), WATCH between
    (copy gone, scene sharp). --o is the copy's opacity, --read the scene's softness (scene.js defocus uniform; CSS only dims, never blurs). */
 @media (max-width: 859px) {
-  .top nav .nav-x, .actions .btn--ghost { display: none; } /* first screen: wordmark + one link, one button; GitHub lives in the nav */
+  .top nav .nav-x, .actions .btn--ghost { display: none; } /* first screen: wordmark + nav, one button; GitHub lives in the nav */
   .rail { left: 0; right: 0; top: 0; bottom: auto; padding: 0; } /* thin progress line along the top edge, no chapter links */
   .rail a { display: none; }
   .rail__bar { left: 0; right: 0; bottom: auto; top: 0; height: 2px; }
@@ -554,13 +554,9 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 /* hub */
 .adp-h1 { margin-bottom: 28px; font: 600 clamp(2.2rem, 1.4rem + 3vw, 3.6rem)/1.05 var(--display); letter-spacing: -0.02em; }
 .adp-hub { display: grid; gap: 20px; align-items: start; }
-.adp-rail { display: none; }
-.adp-pick { display: grid; gap: 8px; font: 500 0.78rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
-.adp-pick select { width: 100%; min-height: 48px; padding: 0 12px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: 400 1rem/1 inherit; font-family: inherit; letter-spacing: 0; text-transform: none; }
 @media (min-width: 900px) {
   .adp-hub { grid-template-columns: 280px minmax(0, 1fr); gap: 32px; }
-  .adp-pick { display: none; }
-  .adp-rail { display: block; position: sticky; top: 72px; }
+  .adp-rail { position: sticky; top: 72px; }
 }
 .adp-rail section + section { margin-top: 24px; }
 .adp-rail h2 { margin-bottom: 8px; font: 500 0.75rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }

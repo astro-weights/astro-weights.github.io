@@ -436,7 +436,7 @@ export default function App() {
         <a className="word" href={hub ? '/' : '#drift'}>astro-weights</a>
         <nav aria-label="Main">
           <a className="nav-d" href={DOCS}>Docs</a>
-          <a href="/adapters/" aria-current={hub ? 'page' : undefined}>Adapters</a>
+          <a href="/adapters/" aria-current={hub ? (location.pathname === '/adapters/' ? 'page' : 'true') : undefined}>Adapters</a>
           <a className="nav-x" href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a className="nav-x" href={PYPI}>PyPI</a>
