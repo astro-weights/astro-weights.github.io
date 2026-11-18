@@ -51,16 +51,36 @@ const SLIDES = [
         ['Tokens per answer, base model = 100', [['Base model', '100', 1 / 1.027], ['Random direction (control)', '+2.7%, n.s.', 1], ['“Be concise” prompt', '−18.8%', 0.812 / 1.027], ['With adapter', '−28.5%', 0.715 / 1.027, 1]]],
         ['Accuracy', [['Base model', '90.2%', 0.902], ['With adapter', '88.8%', 0.888, 1]]],
       ],
+      problem: "A pirate searches seven islands for buried treasure. If each island has a $\\frac{1}{5}$ chance of having treasure, what is the probability that exactly 4 of the islands have treasure?",
+      tps: TPS, load: () => import('./demoMath5.json'),
+      cols: [['Base model', 'base', 911, 'Finished in 911 tokens, correct'], ['With adapter', 'edit', 646, 'Finished in 646 tokens, correct']],
       note: 'All 500 problems, greedy decoding. Accuracy difference −1.4 pp is not statistically significant (p = 0.26). MATH-500 only: on code benchmarks the prompt cuts more than the adapter.',
     },
     {
       tab: '27B · MBPP+',
       lead: <>27B adapter on code: about <mark>−31%</mark> tokens on MBPP+. No accuracy change detected.</>,
+      problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\n```\n\"\"\"\nWrite a function to find the lateral surface area of a cube given its side length.\nassert lateralsurface_cube(5)==100\n\"\"\"\n```",
+      tps: TPS, load: () => import('./demoMbpp.json'),
+      cols: [['Base model', 'base', 132, 'Finished in 132 tokens, tests pass'], ['With adapter', 'edit', 102, 'Finished in 102 tokens, tests pass']],
+      note: '378 problems. Pass rate 77.3% against 76.7%; the difference is not statistically significant (p = 0.80).',
+    },
+    {
+      tab: '27B · BigCodeBench',
+      lead: <>27B adapter on BigCodeBench: about <mark>−15%</mark> tokens. No accuracy change detected.</>,
       groups: [
-        ['Tokens per answer, base model = 100', [['Base model', '100', 1], ['With adapter', '−31.0%', 0.69, 1]]],
-        ['Accuracy', [['Base model', '77.3%', 0.773], ['With adapter', '76.7%', 0.767, 1]]],
+        ['Mean tokens per answer', [['Base model', '392.4', 1], ['With adapter', '334.8', 334.8 / 392.4, 1]]],
+        ['Tests passed', [['Base model', '52.5%', 0.525], ['With adapter', '51.8%', 0.518, 1]]],
       ],
-      note: '378 problems. Accuracy difference is not statistically significant (p = 0.80).',
+      note: 'BigCodeBench Instruct, 1,129 tasks, greedy decoding. Token change −14.7%; pass-rate difference −0.7 pp is not statistically significant (p = 0.48). Neither run hit the token cap.',
+    },
+    {
+      tab: '27B · HumanEval+',
+      lead: <>27B adapter on HumanEval+: about <mark>−11%</mark> tokens. No accuracy change detected.</>,
+      groups: [
+        ['Mean tokens per answer', [['Base model', '268.9', 1], ['With adapter', '239.6', 239.6 / 268.9, 1]]],
+        ['Tests passed', [['Base model', '91.5%', 0.915], ['With adapter', '90.9%', 0.909, 1]]],
+      ],
+      note: '164 tasks, greedy decoding. Token change −10.9%; pass-rate difference −0.6 pp is not statistically significant (p = 1.0). Neither run hit the token cap. On a typical task the answer is unchanged; the saving comes from a minority of tasks.',
     },
   ] : []),
 ]
@@ -146,8 +166,9 @@ function Pair({ s, onDone }) {
 const Face = ({ s, onDone }) => (
   <>
     <p className="results__lead">{s.lead}</p>
-    {s.groups ? <Bars s={s} /> : <Pair s={s} onDone={onDone} />}
-    {s.cols && s.note && <p className="bars__note" style={{ marginTop: 16 }}>{s.note}</p>}
+    {s.groups && <Bars s={s} />}
+    {s.cols && <Pair s={s} onDone={onDone} />}
+    {s.cols && !s.groups && s.note && <p className="bars__note" style={{ marginTop: 16 }}>{s.note}</p>}
   </>
 )
 
