@@ -308,6 +308,7 @@ function Story() {
                 <a className="btn btn--primary" href={DOCS + 'tutorials/first-edit/'}>Read the docs</a>
               </div>
               <div className="enter" style={{ '--d': '320ms' }}><CopyInstall /></div>
+              <div className="hero-band" aria-hidden="true" />
               {/* Readout: one hard fact on the first screen; wording from the approved 27B Results headline (DRAFT labels, Marketing) */}
 <div className="readout enter" style={{ '--d': '420ms' }}>
                 <p className="readout__scope">27B adapter · <span className="nb">MATH-500</span></p>

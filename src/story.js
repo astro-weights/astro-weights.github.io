@@ -22,6 +22,11 @@ export function initStory(root, { reduced, fixedT, onGL }) {
   const cols = chapters.map((c) => c.querySelector('.copy-col'))
   const links = [...root.querySelectorAll('.rail a')]
   const fill = root.querySelector('.rail__fill')
+  const band = root.querySelector('.hero-band') // phones: the gap under the install box where the scene sits on the first screen
+  let hasBand = false
+  // 1 on the first screen (scene parked in the band, sharp and bright), 0 from the Burn chapter on (scene where it always was)
+  const heroOf = (t) => (hasBand ? 1 - win(t, 0.05, 0.6) : 0)
+  const sceneRead = (t) => (mob && !reduced ? readOf(t) * (1 - heroOf(t)) : 0)
   const geo = new Map() // overlay -> { w, h, A }
   let stops = [0, 1, 2] // scrollY at which t = 0, 1, 2
   let scene = null, visible = true, raf = 0, dead = false
@@ -44,6 +49,12 @@ export function initStory(root, { reduced, fixedT, onGL }) {
       if (!w || !h) continue
       const A = anchorPx(w, h)
       geo.set(ov, { w, h, A })
+    }
+    hasBand = mob && !reduced && !!band && band.offsetHeight > 0
+    if (hasBand) {
+      const b = band.getBoundingClientRect(), H = pin.clientHeight
+      pin.style.setProperty('--hero-dy', (b.top + b.height / 2 - root.getBoundingClientRect().top - 0.33 * H).toFixed(1) + 'px')
+      pin.style.setProperty('--hero-s', Math.min(1, b.height / (0.3 * H)).toFixed(3))
     }
     lastPaint = -1
   }
@@ -89,7 +100,7 @@ export function initStory(root, { reduced, fixedT, onGL }) {
   }
 
   function paintAll(t) {
-    const read = mob && !reduced ? readOf(t) : 0
+    const read = sceneRead(t)
     if (reduced) frames.forEach((f, i) => paint(f, i))
     else paint(stage, t, 1 - read)
     // One focus value drives both: --o is the copy's opacity, --read dims and softens the scene (phones only; CSS and scene.js apply it).
@@ -100,6 +111,7 @@ export function initStory(root, { reduced, fixedT, onGL }) {
         c.style.setProperty('--o', o.toFixed(3)); c.classList.toggle('is-gone', o < 0.05)
       })
       pin.style.setProperty('--read', read.toFixed(3))
+      pin.style.setProperty('--hero', heroOf(t).toFixed(3))
     }
     if (fill) fill.style.transform = `scaleX(${(t / 2).toFixed(3)})`
     const a = Math.round(t)
@@ -119,7 +131,7 @@ export function initStory(root, { reduced, fixedT, onGL }) {
     const tg = target()
     ts = fixedT != null ? fixedT : Math.abs(tg - ts) < 0.0004 ? tg : ts + (tg - ts) * (1 - Math.exp(-dt * 10))
     if (ts !== lastPaint) paintAll(ts)
-    scene?.render(ts, clock, mob && !reduced ? readOf(ts) : 0)
+    scene?.render(ts, clock, sceneRead(ts))
     raf = requestAnimationFrame(frame)
   }
   const kick = () => { if (!raf && !dead && visible && !document.hidden && !reduced) { last = 0; raf = requestAnimationFrame(frame) } }
