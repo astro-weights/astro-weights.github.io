@@ -1,4 +1,4 @@
-// Pretrained adapters: landing block (tabs, token change, run snippet) and the /adapters/ hub.
+// Ready-made adapters (Marketing word: edits are not trained): landing block (tabs, token change, run snippet) and the /adapters/ hub.
 // Data: src/adapters.json, copied from each adapter's public Hugging Face card. Add an adapter there; vite.config.js
 // writes its page at /adapters/<slug>/. Minimal text by user order 2026-11-18: name, number, command, links.
 import { useId, useRef, useState } from 'react'
@@ -7,9 +7,12 @@ import data from './adapters.json'
 const ADAPTERS = data.adapters
 const page = (a) => `/adapters/${a.slug}/`
 const HF = (repo) => 'https://huggingface.co/' + repo
+// real minus sign; one decimal unless the source row gives more (eval field dp)
 const pct = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + '%'
-const pp = (v) => (v > 0 ? '+' : v < 0 ? '−' : '+') + Math.abs(v).toFixed(1) + ' pp'
-const ci = (e) => (e.ci ? `[${pp(e.ci[0]).replace(' pp', '')}, ${pp(e.ci[1]).replace(' pp', '')}]` : e.se != null ? `SE ${e.se} pp` : '')
+const pp = (v, dp = 1) => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(dp) + ' pp'
+const n = (v) => 'n=' + v.toLocaleString('en-US')
+const NOTICE = 'Unofficial community adapters. Not affiliated with or endorsed by the Qwen team or Alibaba Cloud.'
+const ci = (e) => (e.ci ? `[${pp(e.ci[0], e.dp).replace(' pp', '')}, ${pp(e.ci[1], e.dp).replace(' pp', '')}]` : e.se != null ? `SE ${e.se} pp` : '')
 
 export const isHub = () => location.pathname.startsWith('/adapters')
 
@@ -59,10 +62,14 @@ function Panel({ a, hub }) {
     <div className="adp-pw">
       <Name className="adp-pname">{a.name}</Name>
       <div className="adp-panel">
-        <dl className="adp-stats">
-          <dt>Token change</dt>
-          <dd><b>{pct(h.tokens)}</b><span>{h.bench}, n {h.n}</span></dd>
-        </dl>
+        <div className="adp-side">
+          <dl className="adp-stats">
+            <div><dt>Token change</dt><dd><b>{pct(h.tokens)}</b></dd></div>
+            <div><dt>Accuracy change</dt><dd><b className="adp-acc">{pp(h.acc).replace(' pp', '')}<small> pp</small></b><span>95% CI {ci(h)}</span></dd></div>
+          </dl>
+          <p className="adp-src">{h.bench}, {n(h.n)}</p>
+          {a.caveat && <p className="adp-caveat">{a.caveat}</p>}
+        </div>
         <div className="adp-get">
           <Code key={a.slug} a={a} />
           <p className="adp-links">
@@ -84,7 +91,7 @@ export function AdaptersBlock() {
   return (
     <section className="sec" id="adapters" aria-labelledby="h-adp">
       <div className="wrap adp">
-        <h2 id="h-adp" className="adp-label">Pretrained adapters</h2>
+        <h2 id="h-adp" className="adp-label">Ready-made adapters</h2>
         {/* DRAFT claim line (Marketing) */}
         <p className="adp-lead">Pick an adapter, <mark>copy the command</mark>.</p>
         <div className="adp-tabrow">
@@ -96,6 +103,7 @@ export function AdaptersBlock() {
           <a className="adp-all" href="/adapters/">Browse all adapters</a>
         </div>
         <div role="tabpanel" id={`${id}p`} aria-labelledby={`${id}t${i}`}><Panel a={shown[i]} /></div>
+        <p className="adp-notice">{NOTICE}</p>
       </div>
     </section>
   )
@@ -109,7 +117,7 @@ const Table = ({ a }) => (
       <tbody>
         {a.evals.map((e) => (
           <tr key={e.mode + e.bench}>
-            <th scope="row">{e.bench}</th><td>{e.mode}</td><td>{e.n}</td><td>{pp(e.acc)}</td><td>{ci(e)}</td><td>{pct(e.tokens)}</td>
+            <th scope="row">{e.bench}</th><td>{e.mode}</td><td>{e.n.toLocaleString('en-US')}</td><td>{pp(e.acc, e.dp)}</td><td>{ci(e)}</td><td>{pct(e.tokens)}</td>
           </tr>
         ))}
       </tbody>
@@ -125,7 +133,7 @@ export function Hub() {
   return (
     <main className="hub">
       <div className="wrap adp">
-        <h1 className="adp-h1">Pretrained adapters</h1>
+        <h1 className="adp-h1">Ready-made adapters</h1>
         <div className="adp-hub">
           <nav className="adp-rail" aria-label="Adapters">
             {groups.map(([fam, list]) => (
@@ -150,6 +158,7 @@ export function Hub() {
               <h3 id="h-evals">All evals</h3>
               <Table a={cur} />
               <p className="adp-note">{cur.evalNote}</p>
+              <p className="adp-notice">{NOTICE}</p>
             </section>
           </div>
         </div>

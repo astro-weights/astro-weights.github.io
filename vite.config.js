@@ -42,10 +42,11 @@ function adapterPages() {
         mkdirSync(dir + path, { recursive: true })
         writeFileSync(dir + path + 'index.html', out)
       }
-      write('/adapters/', 'Pretrained adapters | astro-weights', 'Pretrained LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
+      write('/adapters/', 'Ready-made LoRA adapters | astro-weights', 'Ready-made LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
       for (const a of adapters) {
         const h = a.headline
-        write(`/adapters/${a.slug}/`, `${a.name} | astro-weights adapters`, `${a.name}: ${pct(h.tokens)} tokens on ${h.bench}, n ${h.n}, paired against the base model. Load with ${a.use.map((u) => u.label).join(', ')}.`)
+        const tail = a.metaCaveat ? '; ' + a.metaCaveat : '' // a token claim that has a known cost travels with it (claims sheet C6/C9)
+        write(`/adapters/${a.slug}/`, `${a.name} | astro-weights adapters`, `${a.name}: ${pct(h.tokens)} tokens on ${h.bench}, n=${h.n}, paired against the base model${tail}. Load with ${a.use.map((u) => u.label).join(', ')}.`)
       }
     },
   }

@@ -23,7 +23,7 @@ Python library. Agent proposes small low-rank edits to open LLM weights; edits t
 
 ## Adapters
 
-- [Pretrained adapters](https://astro-weights.dev/adapters/): pretrained LoRA adapters for open LLMs, paired evals, load commands
+- [Ready-made adapters](https://astro-weights.dev/adapters/): ready-made LoRA adapters for open LLMs, paired evals, load commands
 - [qwen3.8-27B-terse](https://astro-weights.dev/adapters/qwen3.8-27b-terse/)
 - [qwen3.5-9B-terse](https://astro-weights.dev/adapters/qwen3.5-9b-terse/)
 
