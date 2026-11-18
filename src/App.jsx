@@ -85,7 +85,7 @@ const Bars = ({ s }) => (
 )
 
 // One slide's demo: runs only while on screen (stops and resets when its slide leaves).
-function Pair({ s }) {
+function Pair({ s, onDone }) {
   const root = useRef(null)
   const [data, setData] = useState(null)
   const [on, setOn] = useState(false)
@@ -109,7 +109,7 @@ function Pair({ s }) {
     const id = setInterval(() => setMs((m) => (m + 50 < total ? m + 50 : null)), 50)
     return () => clearInterval(id)
   }, [run, total])
-  useEffect(() => { if (ms == null) setRun(false) }, [ms])
+  useEffect(() => { if (ms == null && run) { setRun(false); onDone?.() } }, [ms]) // run still true here = it reached the end by itself
   const play = () => { if (ms == null) setMs(0); setRun(true) }
   return (
     <div className={'demo' + (open ? ' demo--open' : '')} ref={root}>
@@ -143,10 +143,10 @@ function Pair({ s }) {
   )
 }
 
-const Face = ({ s }) => (
+const Face = ({ s, onDone }) => (
   <>
     <p className="results__lead">{s.lead}</p>
-    {s.groups ? <Bars s={s} /> : <Pair s={s} />}
+    {s.groups ? <Bars s={s} /> : <Pair s={s} onDone={onDone} />}
     {s.cols && s.note && <p className="bars__note" style={{ marginTop: 16 }}>{s.note}</p>}
   </>
 )
@@ -156,6 +156,21 @@ function Carousel() {
   const track = useRef(null)
   const [i, setI] = useState(0)
   const n = SLIDES.length
+  // auto-advance: next slide a few seconds after the demo ends (or after a read of a bars slide); only while on screen,
+  // never under reduced motion, and off for good once the visitor touches, clicks, keys or focuses anything in the carousel
+  const root = useRef(null)
+  const [auto, setAuto] = useState(() => !reducedNow())
+  const [seen, setSeen] = useState(false)
+  const [done, setDone] = useState(-1)
+  useEffect(() => { const io = new IntersectionObserver(([e]) => setSeen(e.intersectionRatio >= 0.35), { threshold: 0.35 }); io.observe(root.current); return () => io.disconnect() }, [])
+  useEffect(() => {
+    if (!auto || !seen || n < 2) return
+    const pair = !!SLIDES[i].cols
+    if (pair && done !== i) return
+    const id = setTimeout(() => { setDone(-1); go((i + 1) % n) }, pair ? 4000 : 9000)
+    return () => clearTimeout(id)
+  }, [auto, seen, i, done])
+  const stop = () => setAuto(false)
   const onScroll = () => { const t = track.current, max = t.scrollWidth - t.clientWidth; setI(max > 0 ? Math.round((t.scrollLeft / max) * (n - 1)) : 0) }
   const go = (k) => track.current.scrollTo({ left: track.current.children[k].offsetLeft, behavior: reducedNow() ? 'auto' : 'smooth' })
   // track takes the height of the slide on screen, so a short card leaves no blank tail (not when both cards show side by side)
@@ -167,13 +182,13 @@ function Carousel() {
   }, [i])
   const name = (k) => `Slide ${k + 1} of ${n}: ${SLIDES[k].tab}`
   return (
-    <div className="car" role="group" aria-roledescription="carousel" aria-label="Highlighted results">
+    <div className="car" ref={root} onPointerDown={stop} onKeyDown={stop} onWheel={(e) => Math.abs(e.deltaX) > Math.abs(e.deltaY) && stop()} role="group" aria-roledescription="carousel" aria-label="Highlighted results">
       <div className="car__nav">
         {SLIDES.map((s, k) => <button type="button" className="car__tab" key={s.tab} aria-label={name(k)} aria-current={k === i || undefined} onClick={() => go(k)}>{s.tab}</button>)}
-        <p className="car__at sr" aria-live="polite">{i + 1} of {n}</p>
+        <p className="car__at sr" aria-live={auto ? 'off' : 'polite'}>{i + 1} of {n}</p>
       </div>
       <div className="car__track" ref={track} onScroll={onScroll}>
-        {SLIDES.map((s, k) => <article className="car__slide" key={s.tab} role="group" aria-roledescription="slide" aria-label={name(k)}><Face s={s} /></article>)}
+        {SLIDES.map((s, k) => <article className="car__slide" key={s.tab} role="group" aria-roledescription="slide" aria-label={name(k)}><Face s={s} onDone={() => setDone(k)} /></article>)}
       </div>
     </div>
   )
