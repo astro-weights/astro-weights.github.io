@@ -1,7 +1,9 @@
 #!/bin/sh
-# Build the Pages artifact: landing page at /, library docs at /docs/, blog at /blog/,
+# Build the Pages artifact: landing page at /, library docs at /docs/ (newest release tag),
+# dev docs at /docs/dev/ (library main, not indexed), blog at /blog/ (library main),
 # redirect stubs for old root docs URLs, and sitemap.xml + robots.txt at the root.
-# Output: _site/. Needs uv and npm on PATH, and the library repo checked out at $LIB (default: lib).
+# Output: _site/. Needs uv, npm, python3 on PATH, and the library repo checked out at $LIB
+# (default: lib) on main, with tags.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -12,10 +14,33 @@ command -v npm >/dev/null 2>&1 || PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 DOMAIN=https://astro-weights.dev
 
 LIB=${LIB:-lib}
+STABLE=lib-stable
 rm -rf _site dist
 
-# 1. docs -> $LIB/site/
-(cd "$LIB" && uv run --only-group docs zensical build --strict --clean)
+# 0. stable tree: newest release tag, pre-releases (a/b/rc) skipped, at $STABLE/.
+#    Pages come from the tag; site chrome (theme overrides, assets, config except nav) from
+#    main, so consent banner, analytics and look match the rest of the site.
+TAG=$(git -C "$LIB" tag -l 'v*' --sort=-v:refname | grep -vE '[0-9](a|b|rc)[0-9]+' | head -n 1)
+[ -n "$TAG" ] || { echo "no release tag in $LIB" >&2; exit 1; }
+echo "stable docs: $TAG"
+rm -rf "$STABLE"
+git -C "$LIB" worktree prune
+git -C "$LIB" worktree add -q --detach "$PWD/$STABLE" "$TAG"
+rm -rf "$STABLE/overrides"
+cp -R "$LIB/overrides" "$STABLE/overrides"
+cp -R "$LIB/docs/assets/." "$STABLE/docs/assets/"
+python3 - "$LIB/zensical.toml" "$STABLE/zensical.toml" <<'PY'
+import re, sys
+nav = re.compile(r"^nav = \[.*?^\]$", re.S | re.M)
+main, tag = (open(p).read() for p in sys.argv[1:])
+assert nav.search(main) and nav.search(tag), "nav block not found"
+open(sys.argv[2], "w").write(nav.sub(lambda _: nav.search(tag).group(0), main))
+PY
+
+# 1. docs -> $STABLE/site/; dev docs -> $LIB/site/ (own site_url, so links and canonicals are rooted at /docs/dev/)
+(cd "$STABLE" && uv run --only-group docs zensical build --strict --clean)
+sed 's|^site_url = .*|site_url = "https://astro-weights.dev/docs/dev/"|' "$LIB/zensical.toml" > "$LIB/zensical.dev.toml"
+(cd "$LIB" && uv run --only-group docs zensical build -f zensical.dev.toml --strict --clean)
 
 # 1b. blog -> $LIB/site-blog/. Own config, so its links and canonical URLs are rooted at /blog/.
 #     Skipped until the library repo ships zensical.blog.toml.
@@ -32,7 +57,9 @@ npm ci && npx vite build
 mkdir _site
 cp -R dist/. _site/
 mkdir _site/docs
-cp -R "$LIB/site/." _site/docs/
+cp -R "$STABLE/site/." _site/docs/
+mkdir _site/docs/dev
+cp -R "$LIB/site/." _site/docs/dev/
 if [ -n "$BLOG" ]; then
   mkdir _site/blog
   cp -R "$LIB/site-blog/." _site/blog/
@@ -40,7 +67,7 @@ fi
 
 # 4. redirect stubs: every docs page that used to live at the root, except the docs home.
 #    Never overwrite a landing file.
-(cd "$LIB/site" && find . -name index.html ! -path ./index.html | sed 's|^\./||; s|/index\.html$||' | sort) |
+(cd "$STABLE/site" && find . -name index.html ! -path ./index.html | sed 's|^\./||; s|/index\.html$||' | sort) |
 while IFS= read -r page; do
   [ -e "_site/$page/index.html" ] && continue
   mkdir -p "_site/$page"
@@ -98,6 +125,7 @@ NOTFOUND
 cat > _site/robots.txt <<ROBOTS
 User-agent: *
 Allow: /
+Disallow: /docs/dev/
 
 Sitemap: $DOMAIN/sitemap.xml
 ROBOTS
