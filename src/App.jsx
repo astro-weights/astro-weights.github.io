@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import logo from '/shared/logo.svg'
 import { initStory } from './story.js'
 import Counter from './rb/Counter.jsx'
@@ -43,6 +43,8 @@ function Pair({ s }) {
   const [on, setOn] = useState(false)
   const [ms, setMs] = useState(null) // null = rest (end state)
   const [run, setRun] = useState(false)
+  const [open, setOpen] = useState(false) // phone only: answer panels collapsed behind a toggle (CSS hides the toggle on desktop)
+  const uid = useId()
   const total = (s.cols[0][2] / s.tps) * 1000
   useEffect(() => {
     // vertical margin only: a slide waiting off to the side does not load its text
@@ -62,7 +64,7 @@ function Pair({ s }) {
   useEffect(() => { if (ms == null) setRun(false) }, [ms])
   const play = () => { if (ms == null) setMs(0); setRun(true) }
   return (
-    <div className="demo" ref={root}>
+    <div className={'demo' + (open ? ' demo--open' : '')} ref={root}>
       <div className="demo__problem">
         <p className="demo__label">Same problem</p>
         <blockquote>{s.problem}</blockquote>
@@ -76,7 +78,10 @@ function Pair({ s }) {
               <p className="demo__who">{who}</p>
               <i className="demo__bar"><i style={{ '--w': n / CAP }} /></i>
               <p className="demo__count demo__count--big"><b>{tok(n)}</b><span>tokens of {tok(CAP)} cap</span></p>
-              <div className="demo__panel" data-rest={ms == null || !run || undefined} tabIndex={0} role="group" aria-label={who + ' answer'}><pre>{text.slice(0, Math.floor((n * text.length) / end))}</pre></div>
+              <div className="demo__ans" id={uid + key}>
+                <p className="demo__plabel">{who}</p>
+                <div className="demo__panel" data-rest={ms == null || !run || undefined} tabIndex={0} role="group" aria-label={who + ' answer'}><pre>{text.slice(0, Math.floor((n * text.length) / end))}</pre></div>
+              </div>
               <p className="demo__end" style={{ visibility: n === end ? 'visible' : 'hidden' }}>{outcome}</p>
             </div>
           )
@@ -84,6 +89,7 @@ function Pair({ s }) {
       </div>
       <div className="demo__foot">
         <button type="button" className="demo__btn" onClick={run ? () => setRun(false) : play}>{run ? 'Pause' : ms == null ? 'Replay' : 'Play'}</button>
+        <button type="button" className="demo__tog" aria-expanded={open} aria-controls={s.cols.map(([, k]) => uid + k).join(' ')} onClick={() => setOpen(!open)}>{open ? 'Hide answers' : 'Show answers'}</button>
       </div>
     </div>
   )
@@ -107,7 +113,8 @@ function Carousel() {
   useEffect(() => {
     const fit = () => { const t = track.current; t.style.height = getComputedStyle(t).display === 'flex' ? t.children[i].offsetHeight + 'px' : '' }
     fit(); addEventListener('resize', fit); document.fonts?.ready.then(fit)
-    return () => removeEventListener('resize', fit)
+    const ro = new ResizeObserver(fit); ro.observe(track.current.children[i]) // answers toggle, text wrap, font load
+    return () => { removeEventListener('resize', fit); ro.disconnect() }
   }, [i])
   const name = (k) => `Slide ${k + 1} of ${n}: ${SLIDES[k].tab}`
   return (
