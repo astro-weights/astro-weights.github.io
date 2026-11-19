@@ -165,7 +165,7 @@
           2.5
         ]
       },
-      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown. All rows except GSM8K (full) were measured on the Q4_K_M GGUF (llama.cpp). GSM8K (full) was measured on bf16 weights with the LoRA (vLLM/PEFT path) and is not on the Hugging Face card yet.",
+      "evalNote": "Held-out problems, thinking disabled, 4,096-token cap, paired against the unedited model on the same problems. MATH-500 confirm: 2 samples per problem; other benchmarks: one sample per problem. Where the card gives a standard error and no interval, the standard error is shown. All rows except GSM8K (full) were measured on the Q4_K_M GGUF (llama.cpp). GSM8K (full) was measured on bf16 weights with the LoRA (vLLM/PEFT path).",
       "evals": [
         {
           "mode": "Thinking off",
