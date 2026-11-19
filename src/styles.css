@@ -305,7 +305,10 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .foot { padding: 20px 0 28px; border-top: 1px solid var(--line); }
 .foot__in { display: grid; gap: 4px 24px; align-items: center; }
 @media (min-width: 860px) { .foot__in { grid-template-columns: auto 1fr; } .foot nav { justify-self: end; } .foot__legal { text-align: right; } }
-.foot__id { display: flex; align-items: center; gap: 12px; }
+.foot__id { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.foot__ph { display: inline-flex; }
+@media (min-width: 860px) { .foot__ph { margin-left: 12px; } }
+.foot__id .foot__ph img { display: block; width: 250px; height: 54px; }
 .foot__id img { width: 32px; height: 32px; }
 .foot nav { display: flex; flex-wrap: wrap; margin: 0 -12px; }
 .foot__status { color: var(--text); }

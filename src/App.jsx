@@ -413,6 +413,8 @@ function Footer() {
         <div className="foot__id">
           <img src={logo} width="40" height="40" alt="astro-weights astronaut logo" />
           <a className="word" href={isHub() ? '/' : '#drift'}>astro-weights</a>
+          {/* Product Hunt badge, hotlinked for the live upvote count (user choice 2026-11-19). It loads from api.producthunt.com without consent; /privacy/ says so. */}
+          <a className="foot__ph" href="https://www.producthunt.com/products/astro-weights?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-astro-weights" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1322337&theme=dark&t=1795128508475" width="250" height="54" loading="lazy" alt="astro-weights on Product Hunt" /></a>
         </div>
         <nav aria-label="Footer">
           <a href={DOCS}>Docs</a>
