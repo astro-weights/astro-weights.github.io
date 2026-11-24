@@ -8,51 +8,51 @@
       "headline": {
         "bench": "MATH-500 (confirm split)",
         "n": 244,
-        "tokens": -29.9,
-        "acc": 0.0,
+        "tokens": -33.8,
+        "acc": -2.25,
         "ci": [
-          -1.7,
-          1.7
+          -3.69,
+          -0.92
         ]
       },
-      "evalNote": "Paired against the unedited base: same prompts, same sampling, vLLM in bf16. Accuracy differences in percentage points with 95% CIs. Thinking off uses a 4k-token budget; thinking on uses 16k. \"MATH fresh\" means MATH test problems that are not in MATH-500.",
+      "evalNote": "Paired against the unedited base: same prompts, same sampling, vLLM in bf16. Thinking off: every answer that hit the 4k-token limit was rerun for both models with a 16k limit (corrected 2026-11-24; the first version let the 4k limit cut off more base answers and showed no accuracy change). Rows marked \"not rerun\" kept the 4k limit; thinking on uses 16k. Confirm split: 4 samples per problem; MATH fresh set 1: 2. Accuracy in percentage points, 95% CIs (bootstrap over problems). \"MATH fresh\" means MATH test problems that are not in MATH-500.",
       "evals": [
         {
           "mode": "Thinking off",
           "bench": "MATH-500 (confirm split)",
           "n": 244,
-          "acc": 0.0,
+          "acc": -2.25,
           "ci": [
-            -1.7,
-            1.7
+            -3.69,
+            -0.92
           ],
-          "tokens": -29.9
+          "tokens": -33.8
         },
         {
           "mode": "Thinking off",
           "bench": "MATH fresh, set 1",
           "n": 500,
-          "acc": 1.0,
+          "acc": -1.9,
           "ci": [
-            -0.5,
-            2.5
+            -3.2,
+            -0.6
           ],
-          "tokens": -31.0
+          "tokens": -34.8
         },
         {
           "mode": "Thinking off",
           "bench": "MATH fresh, set 2",
           "n": 1000,
-          "acc": 1.5,
+          "acc": -2.3,
           "ci": [
-            -0.1,
-            3.1
+            -3.6,
+            -1.1
           ],
-          "tokens": -31.6
+          "tokens": -34.6
         },
         {
           "mode": "Thinking off",
-          "bench": "GSM8K",
+          "bench": "GSM8K (not rerun)",
           "n": 300,
           "acc": -0.3,
           "ci": [
@@ -63,7 +63,7 @@
         },
         {
           "mode": "Thinking off",
-          "bench": "IFEval",
+          "bench": "IFEval (not rerun)",
           "n": 200,
           "acc": 0.0,
           "ci": [
@@ -76,16 +76,16 @@
           "mode": "Thinking off",
           "bench": "MMLU-Pro",
           "n": 300,
-          "acc": 0.7,
+          "acc": -4.0,
           "ci": [
-            -2.9,
-            4.3
+            -7.0,
+            -1.0
           ],
-          "tokens": -37.2
+          "tokens": -39.2
         },
         {
           "mode": "Thinking on (16k)",
-          "bench": "MATH-500 (confirm split)",
+          "bench": "MATH-500 (confirm split, not rerun)",
           "n": 244,
           "acc": 0.2,
           "ci": [
@@ -96,7 +96,7 @@
         },
         {
           "mode": "Thinking on (16k)",
-          "bench": "MATH fresh, set 1",
+          "bench": "MATH fresh, set 1 (not rerun)",
           "n": 500,
           "acc": 0.6,
           "ci": [
@@ -107,7 +107,7 @@
         },
         {
           "mode": "Thinking on (16k)",
-          "bench": "MATH fresh, set 2",
+          "bench": "MATH fresh, set 2 (not rerun)",
           "n": 1000,
           "acc": 0.8,
           "ci": [
@@ -118,7 +118,7 @@
         },
         {
           "mode": "Thinking on (16k)",
-          "bench": "GSM8K",
+          "bench": "GSM8K (not rerun)",
           "n": 300,
           "acc": -0.3,
           "ci": [
@@ -129,7 +129,7 @@
         },
         {
           "mode": "Thinking on (16k)",
-          "bench": "MMLU-Pro",
+          "bench": "MMLU-Pro (not rerun)",
           "n": 300,
           "acc": 1.7,
           "ci": [
