@@ -36,10 +36,10 @@ const SLIDES = [
     tps: CAP / 20, load: () => import('./demo9b.json'),
     cols: [['Base model', 'base', 4096, 'Hit the cap with no final answer'], ['With adapter', 'edit', 606, 'Finished in 606 tokens, correct']],
   },
-  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−30%</mark> on <span className="nb">MATH-500</span>. No accuracy change detected.</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
+  { tab: '27B · MATH-500', lead: <>27B adapter: answer length about <mark>−25%</mark> on <span className="nb">MATH-500</span> (n=500).</>, problem: PROBLEM, tps: TPS, load: () => import('./demo9.json'), cols: DEMO },
   {
     tab: '27B · BigCodeBench',
-    lead: <>27B adapter on BigCodeBench: about <mark>−15%</mark> tokens. No accuracy change detected.</>,
+    lead: <>27B adapter on BigCodeBench (n=1,140): about <mark>−15%</mark> tokens.</>,
     problem: "Please provide a self-contained Python script that solves the following problem in a markdown code block:\nGenerates 'n' random integer numbers such that their sum equals 'total', sorts these numbers, and determines the position where a new random number can be inserted to maintain the sorted order. The function uses a retry mechanism to ensure the generated numbers sum up to 'total'.\nThe function should output with:\n    tuple: A tuple containing the sorted numbers as an array and the insertion position for a new number.\nYou should write self-contained code starting with:\n```\nimport random\nimport bisect\nfrom array import array\ndef task_func(n=10, total=100):\n```",
     tps: TPS * 1, load: () => import('./demoBcbMax.json'), limit: 2048,
     cols: [['Base model', 'base', 723, 'Finished in 723 tokens, tests pass'], ['With adapter', 'edit', 442, 'Finished in 442 tokens, tests pass']],
@@ -313,10 +313,9 @@ function Story() {
               <div className="hero-band" aria-hidden="true" />
               {/* Readout: one hard fact on the first screen; wording from the approved 27B Results headline (DRAFT labels, Marketing) */}
 <div className="readout enter" style={{ '--d': '420ms' }}>
-                <p className="readout__scope">27B adapter · <span className="nb">MATH-500</span></p>
+                <p className="readout__scope">27B adapter · math + <span className="nb">MMLU-Pro</span></p>
                 <dl>
-                  <div><dt>Answer length</dt><dd><a href="#results" aria-label="about minus 30 percent, see results">≈<Counter value={30} prefix="−" suffix="%" motionBlur={false} fontSize="1em" fontWeight={600} duration={1.1} stagger={0.12} /></a></dd></div>
-                  <div><dt>Accuracy</dt><dd>No change detected</dd></div>
+                  <div><dt>Answer length</dt><dd><a href="/adapters/qwen3.8-27b-terse/" aria-label="up to minus 39.2 percent, see all evals">{'up to\u00a0'}<Counter value={39.2} decimals={1} prefix="−" suffix="%" motionBlur={false} fontSize="1em" fontWeight={600} duration={1.1} stagger={0.12} /></a></dd></div>
                   <div><dt>Ships as</dt><dd>LoRA adapter</dd></div>
                 </dl>
                 </div>

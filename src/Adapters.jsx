@@ -66,7 +66,6 @@ function Panel({ a, hub }) {
         <div className="adp-side">
           <dl className="adp-stats">
             <div><dt>Token change</dt><dd><b>{pct(h.tokens)}</b></dd></div>
-            <div><dt>Accuracy change</dt><dd><b className="adp-acc">{pp(h.acc).replace(' pp', '')}<small> pp</small></b><span>95% CI {ci(h)}</span></dd></div>
           </dl>
           <p className="adp-src">{h.bench}, {n(h.n)}</p>
           {a.caveat && <p className="adp-caveat">{a.caveat}</p>}
