@@ -4,6 +4,7 @@ import { initStory } from './story.js'
 import Counter from './rb/Counter.jsx'
 import DecryptedText from './rb/DecryptedText.jsx'
 import { AdaptersBlock, Hub, isHub } from './Adapters.jsx'
+import { Verdicts, isResults } from './Verdicts.jsx'
 
 const DOCS = 'https://astro-weights.dev/docs/'
 const GITHUB = 'https://github.com/astro-weights/astro-weights'
@@ -411,7 +412,7 @@ function Footer() {
       <div className="wrap foot__in">
         <div className="foot__id">
           <img src={logo} width="40" height="40" alt="astro-weights astronaut logo" />
-          <a className="word" href={isHub() ? '/' : '#drift'}>astro-weights</a>
+          <a className="word" href={isHub() || isResults() ? '/' : '#drift'}>astro-weights</a>
           {/* Product Hunt badge, hotlinked for the live upvote count (user choice 2026-11-19). It loads from api.producthunt.com without consent; /privacy/ says so. */}
           <a className="foot__ph" href="https://www.producthunt.com/products/astro-weights?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-astro-weights" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1322337&theme=dark&t=1795128508475" width="250" height="54" loading="lazy" alt="astro-weights on Product Hunt" /></a>
         </div>
@@ -431,11 +432,11 @@ function Footer() {
 }
 
 export default function App() {
-  const hub = isHub()
+  const hub = isHub(), res = isResults()
   return (
     <>
-      <header className={'top' + (hub ? ' top--hub' : '')}>
-        <a className="word" href={hub ? '/' : '#drift'}>astro-weights</a>
+      <header className={'top' + (hub || res ? ' top--hub' : '')}>
+        <a className="word" href={hub || res ? '/' : '#drift'}>astro-weights</a>
         <nav aria-label="Main">
           <a className="nav-d" href={DOCS}>Docs</a>
           <a href="/adapters/" aria-current={hub ? (location.pathname === '/adapters/' ? 'page' : 'true') : undefined}>Adapters</a>
@@ -444,7 +445,7 @@ export default function App() {
           <a className="nav-x" href={PYPI}>PyPI</a>
         </nav>
       </header>
-      {hub ? <Hub /> : (
+      {hub ? <Hub /> : res ? <Verdicts /> : (
         <main>
           <Story />
           <Results />

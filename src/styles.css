@@ -593,3 +593,24 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .hub { min-height: 80svh; padding: 40px 0 72px; }
 /* narrow phones: wordmark, Adapters, GitHub. Docs stays reachable from the hero button and the footer. */
 @media (max-width: 419px) { .top .word { white-space: nowrap; } .top nav .nav-d { display: none; } }
+
+/* ---------- /results/: gate verdicts (draft, 0.3) ---------- */
+.res-ph { margin: 0 0 20px; padding: 10px 14px; border: 1px dashed var(--violet-light); border-radius: 4px; font: 500 0.8rem/1.4 var(--mono); letter-spacing: 0.06em; color: var(--violet-light); }
+.res-sum { display: flex; flex-wrap: wrap; gap: 12px 40px; margin: 0 0 24px; }
+.res-sum dt { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.res-sum dd { margin: 4px 0 0; font: 600 2rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.res-v { display: inline-block; padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; font: 500 0.78rem/1.4 var(--mono); color: var(--dim); }
+.res-v--confirmed { border-color: var(--violet-light); color: var(--violet-light); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.res-card { padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+.res-card h2 { margin: 0 0 10px; font: 600 1.15rem/1.3 var(--display); overflow-wrap: anywhere; }
+.res-facts { margin: 16px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.res-facts div, .res-rec dl div { display: contents; }
+.res-facts dt { color: var(--dim); }
+.res-facts dd { margin: 0; }
+.res-rec { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+.res-rec summary { cursor: pointer; font: 500 0.78rem/1.4 var(--mono); color: var(--dim); }
+.res-rec dl { margin: 8px 0 0; display: grid; grid-template-columns: 1fr; gap: 2px; font: 400 0.75rem/1.4 var(--mono); }
+.res-rec dt { margin-top: 6px; color: var(--dim); }
+.res-rec dd { margin: 0; overflow-wrap: anywhere; }
+.res-list + .adp-note { margin-top: 20px; }
