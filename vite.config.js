@@ -48,7 +48,7 @@ function adapterPages() {
       const KEYS = ['verdict', 'backend', 'build', 'config_hash', 'split_manifest_sha256', 'candidates_tried', 'confirm_queries', 'infra_errors', 'footprint', 'schema_version', 'max_new_tokens', 'cap_hit']
       const OPTIONAL = ['schema_version', 'max_new_tokens', 'cap_hit'] // last two from library PR 195; absent in older verdicts
       const share = (x) => typeof x === 'number' && x >= 0 && x <= 1
-      const capOk = (c) => c === undefined || (c && typeof c === 'object' && Object.entries(c).every(([k, s]) => ['confirm', 'test'].includes(k) && s && typeof s === 'object' && Object.values(s).every(share)))
+      const capOk = (c) => c === undefined || (c && typeof c === 'object' && Object.entries(c).every(([k, s]) => /^(confirm|test|side\.[^.]+|suite\.[^.]+)$/.test(k) && s && typeof s === 'object' && Object.values(s).every(share)))
       for (const { name, verdict: v, gate: g } of res.runs) {
         if (!v && !(['confirmed', 'screened out', 'not significant', 'regressed'].includes(g?.outcome) && Number.isInteger(g.candidates_tried) && Number.isInteger(g.confirm_queries))) throw new Error(`results.json: ${name} has no verdict and no complete gate record`)
         if (!v) continue
