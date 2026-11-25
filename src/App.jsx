@@ -419,6 +419,7 @@ function Footer() {
         <nav aria-label="Footer">
           <a href={DOCS}>Docs</a>
           <a href="/adapters/">Adapters</a>
+          <a href="/results/">Results</a>
           <a href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a href={PYPI}>PyPI</a>
@@ -440,6 +441,7 @@ export default function App() {
         <nav aria-label="Main">
           <a className="nav-d" href={DOCS}>Docs</a>
           <a href="/adapters/" aria-current={hub ? (location.pathname === '/adapters/' ? 'page' : 'true') : undefined}>Adapters</a>
+          <a className="nav-x" href="/results/" aria-current={res ? 'page' : undefined}>Results</a>
           <a className="nav-x" href={BLOG}>Blog</a>
           <a href={GITHUB}>GitHub</a>
           <a className="nav-x" href={PYPI}>PyPI</a>

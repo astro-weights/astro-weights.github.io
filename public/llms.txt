@@ -15,6 +15,8 @@ Python library. Agent proposes small low-rank edits to open LLM weights; edits t
 - [Build adapter from recipe file](https://astro-weights.dev/docs/how-to/build-from-recipe/)
 - [Convert dense update to low-rank delta](https://astro-weights.dev/docs/how-to/dense-to-low-rank/)
 - [Find and gate direction](https://astro-weights.dev/docs/how-to/find-direction/)
+- [Run the 0.3 gate](https://astro-weights.dev/docs/how-to/run-gate/)
+- [Gate verdicts](https://astro-weights.dev/docs/explanation/gate-verdicts/)
 - [Compare two eval arms](https://astro-weights.dev/docs/how-to/compare-arms/)
 - [Run eval end to end](https://astro-weights.dev/docs/how-to/run-eval/)
 - [Reference](https://astro-weights.dev/docs/reference/): Python API
@@ -26,6 +28,10 @@ Python library. Agent proposes small low-rank edits to open LLM weights; edits t
 - [Ready-made adapters](https://astro-weights.dev/adapters/): ready-made LoRA adapters for open LLMs, paired evals, load commands
 - [qwen3.8-27B-terse](https://astro-weights.dev/adapters/qwen3.8-27b-terse/)
 - [qwen3.5-9B-terse](https://astro-weights.dev/adapters/qwen3.5-9b-terse/)
+
+## Results
+
+- [Gate results](https://astro-weights.dev/results/): one row per gated edit
 
 ## Blog
 

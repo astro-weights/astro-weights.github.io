@@ -43,7 +43,7 @@ function adapterPages() {
         writeFileSync(dir + path + 'index.html', noindex ? out.replace('</head>', '<meta name="robots" content="noindex">\n</head>') : out)
       }
       // /results/: draft 0.3 page. A run holds verdict.json (library schema v1), gate.json, or both;
-      // "screened out" writes no verdict.json. noindex and out of nav + sitemap until launch (user call), entries or not.
+      // "screened out" writes no verdict.json. indexed, in nav and sitemap.
       const res = JSON.parse(readFileSync(new URL('./src/results.json', import.meta.url), 'utf8'))
       const KEYS = ['verdict', 'backend', 'build', 'config_hash', 'split_manifest_sha256', 'candidates_tried', 'confirm_queries', 'infra_errors', 'footprint', 'schema_version', 'max_new_tokens', 'cap_hit']
       const OPTIONAL = ['schema_version', 'max_new_tokens', 'cap_hit'] // last two from library PR 195; absent in older verdicts
@@ -55,7 +55,7 @@ function adapterPages() {
         const bad = Object.keys(v).filter((k) => !KEYS.includes(k)).concat(KEYS.filter((k) => !OPTIONAL.includes(k) && !(k in v)))
         if (bad.length || !['confirmed', 'not significant', 'regressed'].includes(v.verdict) || (v.schema_version ?? 1) !== 1 || !capOk(v.cap_hit) || !(v.max_new_tokens == null || Number.isInteger(v.max_new_tokens))) throw new Error(`results.json: ${name} does not match verdict.json schema v1 (${bad.join(', ') || v.verdict})`)
       }
-      write('/results/', 'Gate results | astro-weights', 'Verdicts from the astro-weights 0.3 gate: one row per gated edit.', true)
+      write('/results/', 'Gate results | astro-weights', 'Verdicts from the astro-weights 0.3 gate: one row per gated edit.')
       write('/adapters/', 'Ready-made LoRA adapters | astro-weights', 'Ready-made LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
       for (const a of adapters) {
         const h = a.headline
