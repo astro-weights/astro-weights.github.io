@@ -173,6 +173,7 @@ const AREAS = [
   ['Export', 'llama.cpp GGUF adapter, a merged GGUF from a base GGUF, and a model card.'],
   ['Directions', 'Difference-of-means directions with a split-half gate.'],
   ['Eval', 'A runner with graders, and paired eval statistics: base vs edit on the same items.'],
+  ['Gate', 'Judges an edit on dev, confirm and a sealed test split, against random edits of the same size. Outcome: confirmed, not significant, regressed or screened out. Anything but confirmed means keep the original weights.'],
   ['Agent', <>An MCP server gives an agent a sandboxed numpy kernel and forward passes on base or edited weights, inside a budget. <code>astro-weights run CONFIG.toml</code> drives a whole run and exports the adapter.</>],
 ]
 
