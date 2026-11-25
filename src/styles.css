@@ -459,7 +459,7 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .more h2 { font: 600 clamp(1.9rem, 1.2rem + 2vw, 2.6rem) / 1.05 var(--display); letter-spacing: -0.02em; }
 .steps { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 0 32px; }
 @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1100px) { .steps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 28px; } }
+@media (min-width: 1100px) { .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; } }
 @media (min-width: 640px) and (max-width: 1099px) { .steps li:last-child:nth-child(odd) { grid-column: 1 / -1; } }
 .steps code { font-size: 0.9em; color: var(--text); overflow-wrap: anywhere; }
 .steps li { padding: 14px 0 18px; border-top: 1px solid var(--line); }
