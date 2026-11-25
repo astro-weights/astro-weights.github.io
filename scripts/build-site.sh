@@ -116,7 +116,7 @@ NOTFOUND
   echo '<?xml version="1.0" encoding="UTF-8"?>'
   echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
   echo "<url><loc>$DOMAIN/</loc></url>"
-  (cd dist && find adapters -name index.html | sort) | sed "s|index\.html$||; s|.*|<url><loc>$DOMAIN/&</loc></url>|"
+  (cd dist && find adapters results -name index.html | sort) | sed "s|index\.html$||; s|.*|<url><loc>$DOMAIN/&</loc></url>|"
   for map in _site/docs/sitemap.xml _site/blog/sitemap.xml; do
     [ -f "$map" ] && grep -o '<loc>[^<]*</loc>' "$map" | sed 's|.*|<url>&</url>|'
   done
