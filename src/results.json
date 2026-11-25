@@ -7,6 +7,11 @@
       "verdict": { "verdict": "confirmed", "backend": "vllm", "build": "0.0.0-placeholder", "config_hash": "0000000000000000", "split_manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "candidates_tried": 12, "confirm_queries": 3, "infra_errors": 0, "footprint": { "rank": 1, "rel_norm": 0.01 }, "schema_version": 1 }
     },
     {
+      "name": "example-edit-d",
+      "base": "example-base-model",
+      "gate": { "outcome": "screened out", "candidates_tried": 2, "confirm_queries": 0, "advice": "keep the original weights" }
+    },
+    {
       "name": "example-edit-b",
       "base": "example-base-model",
       "verdict": { "verdict": "not significant", "backend": "llama.cpp", "build": "b0000-placeholder", "config_hash": "1111111111111111", "split_manifest_sha256": "1111111111111111111111111111111111111111111111111111111111111111", "candidates_tried": 20, "confirm_queries": 5, "infra_errors": 2, "footprint": { "rank": 1, "rel_norm": 0.02 }, "schema_version": 1 }
