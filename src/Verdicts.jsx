@@ -5,6 +5,10 @@
 // ponytail: only gate.outcome and counts shown; its margins and arms wait on a user call.
 import data from './results.json'
 
+// cap_hit (verdict.json, optional): share of records cut at max_new_tokens, per split; test when scored, else confirm.
+const pc = (x) => (x * 100).toFixed(1) + '%'
+const capRow = (v) => { const s = v.cap_hit?.test ?? v.cap_hit?.confirm; return s && 'base' in s && 'edit' in s ? `base ${pc(s.base)} · edit ${pc(s.edit)} (${v.cap_hit.test ? 'test' : 'confirm'})` : null }
+
 const DOCS_VERDICTS = 'https://astro-weights.dev/docs/explanation/gate-verdicts/'
 export const isResults = () => location.pathname.startsWith('/results')
 
@@ -40,6 +44,7 @@ export function Verdicts() {
                 <div><dt>Candidates</dt><dd>{v.candidates_tried}</dd></div>
                 <div><dt>Confirm queries</dt><dd>{v.confirm_queries}</dd></div>
                 <div><dt>Infra errors</dt><dd>{v.infra_errors}</dd></div>
+                {capRow(v) && <div><dt>Cap-hit{v.max_new_tokens != null ? ` at ${v.max_new_tokens}` : ''}</dt><dd>{capRow(v)}</dd></div>}
               </dl>
               <details className="res-rec">
                 <summary>Record</summary>
