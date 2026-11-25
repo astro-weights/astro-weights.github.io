@@ -16,7 +16,7 @@ export function Verdicts() {
     <main className="hub">
       <div className="wrap adp">
         <h1 className="adp-h1">Gate results</h1>
-        {data.placeholder && <p className="res-ph" role="note">PLACEHOLDER DATA: example runs, not real results.</p>}
+        {!runs.length ? <p className="res-ph">No gate runs published yet.</p> : (<>
         <dl className="res-sum">
           {['confirmed', 'screened out', 'not significant', 'regressed'].map((v) => (
             <div key={v}><dt>{v}</dt><dd>{count(v)}</dd></div>
@@ -53,6 +53,7 @@ export function Verdicts() {
             </li>
           )})}
         </ul>
+        </>)}
         <p className="adp-note">Every verdict other than confirmed means: keep the original weights. <a href={DOCS_VERDICTS}>How the gate decides</a></p>
       </div>
     </main>

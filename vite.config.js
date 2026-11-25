@@ -43,16 +43,16 @@ function adapterPages() {
         writeFileSync(dir + path + 'index.html', noindex ? out.replace('</head>', '<meta name="robots" content="noindex">\n</head>') : out)
       }
       // /results/: draft 0.3 page. A run holds verdict.json (library schema v1), gate.json, or both;
-      // "screened out" writes no verdict.json. noindex while the data is a placeholder.
+      // "screened out" writes no verdict.json. noindex while no run is published.
       const res = JSON.parse(readFileSync(new URL('./src/results.json', import.meta.url), 'utf8'))
       const KEYS = ['verdict', 'backend', 'build', 'config_hash', 'split_manifest_sha256', 'candidates_tried', 'confirm_queries', 'infra_errors', 'footprint', 'schema_version']
       for (const { name, verdict: v, gate: g } of res.runs) {
-        if (!v && !['confirmed', 'screened out', 'not significant', 'regressed'].includes(g?.outcome)) throw new Error(`results.json: ${name} has no verdict and no gate outcome`)
+        if (!v && !(['confirmed', 'screened out', 'not significant', 'regressed'].includes(g?.outcome) && Number.isInteger(g.candidates_tried) && Number.isInteger(g.confirm_queries))) throw new Error(`results.json: ${name} has no verdict and no complete gate record`)
         if (!v) continue
         const bad = Object.keys(v).filter((k) => !KEYS.includes(k)).concat(KEYS.filter((k) => k !== 'schema_version' && !(k in v)))
         if (bad.length || !['confirmed', 'not significant', 'regressed'].includes(v.verdict) || (v.schema_version ?? 1) !== 1) throw new Error(`results.json: ${name} does not match verdict.json schema v1 (${bad.join(', ') || v.verdict})`)
       }
-      write('/results/', 'Gate results | astro-weights', 'Verdicts from the astro-weights 0.3 gate: one row per gated edit.', res.placeholder)
+      write('/results/', 'Gate results | astro-weights', 'Verdicts from the astro-weights 0.3 gate: one row per gated edit.', !res.runs.length)
       write('/adapters/', 'Ready-made LoRA adapters | astro-weights', 'Ready-made LoRA adapters for open LLMs: paired evals against the base model and the command to load each one.')
       for (const a of adapters) {
         const h = a.headline

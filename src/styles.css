@@ -595,7 +595,7 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 @media (max-width: 419px) { .top .word { white-space: nowrap; } .top nav .nav-d { display: none; } }
 
 /* ---------- /results/: gate verdicts (draft, 0.3) ---------- */
-.res-ph { margin: 0 0 20px; padding: 10px 14px; border: 1px dashed var(--violet-light); border-radius: 4px; font: 500 0.8rem/1.4 var(--mono); letter-spacing: 0.06em; color: var(--violet-light); }
+.res-ph { margin: 0 0 20px; color: var(--dim); }
 .res-sum { display: flex; flex-wrap: wrap; gap: 12px 40px; margin: 0 0 24px; }
 .res-sum dt { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .res-sum dd { margin: 4px 0 0; font: 600 2rem/1 var(--display); font-variant-numeric: tabular-nums; }
