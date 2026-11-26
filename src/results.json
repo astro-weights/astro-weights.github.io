@@ -1,7 +1,7 @@
 {
  "runs": [
   {
-   "name": "Gemma 4 E4B terse (scripted L23)",
+   "name": "gemma-4-E4B-terse",
    "base": "google/gemma-4-E4B-it",
    "verdict": {
     "backend": "vllm",
