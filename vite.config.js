@@ -51,6 +51,8 @@ function adapterPages() {
       const capOk = (c) => c === undefined || (c && typeof c === 'object' && Object.entries(c).every(([k, s]) => /^(confirm|test|side\.[^.]+|suite\.[^.]+)$/.test(k) && s && typeof s === 'object' && Object.values(s).every(share)))
       for (const { name, verdict: v, gate: g } of res.runs) {
         if (!v && !(['confirmed', 'screened out', 'not significant', 'regressed'].includes(g?.outcome) && Number.isInteger(g.candidates_tried) && Number.isInteger(g.confirm_queries))) throw new Error(`results.json: ${name} has no verdict and no complete gate record`)
+        const num = (x) => typeof x === 'number' && Number.isFinite(x)
+        for (const a of g?.arms?.test?.arms ?? []) if (typeof a.arm !== 'string' || !Number.isInteger(a.n_items) || !num(a.diff) || !num(a.tokens_diff) || !Array.isArray(a.ci95) || !a.ci95.every(num)) throw new Error(`results.json: ${name} test arm ${a.arm} is not a gate.json arm row`)
         if (!v) continue
         const bad = Object.keys(v).filter((k) => !KEYS.includes(k)).concat(KEYS.filter((k) => !OPTIONAL.includes(k) && !(k in v)))
         if (bad.length || !['confirmed', 'not significant', 'regressed'].includes(v.verdict) || (v.schema_version ?? 1) !== 1 || !capOk(v.cap_hit) || !(v.max_new_tokens == null || Number.isInteger(v.max_new_tokens))) throw new Error(`results.json: ${name} does not match verdict.json schema v1 (${bad.join(', ') || v.verdict})`)

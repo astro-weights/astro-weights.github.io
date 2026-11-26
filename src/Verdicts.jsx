@@ -11,6 +11,10 @@ const capRow = (v) => { const s = v.cap_hit?.test ?? v.cap_hit?.confirm; return 
 
 // The gate ships in 0.3. Until that tag is on PyPI (__AW_VERSION__ = newest release tag), say so and link the dev docs.
 export const GATE_RELEASED = !/^0\.[0-2]\./.test(__AW_VERSION__)
+// gate.arms.test.arms (gate.json): each arm vs base on the test split, as written; no rounding beyond display.
+const pp = (x) => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(2)
+const testArms = (g) => g?.arms?.test?.arms ?? []
+
 const DOCS_VERDICTS = `https://astro-weights.dev/docs/${GATE_RELEASED ? '' : 'dev/'}explanation/gate-verdicts/`
 export const isResults = () => location.pathname.startsWith('/results')
 
@@ -48,6 +52,17 @@ export function Verdicts() {
                 <div><dt>Infra errors</dt><dd>{v.infra_errors}</dd></div>
                 {capRow(v) && <div><dt>Cap-hit{v.max_new_tokens != null ? ` at ${v.max_new_tokens}` : ''}</dt><dd>{capRow(v)}</dd></div>}
               </dl>
+              {testArms(g).length > 0 && (
+                <table className="res-arms">
+                  <caption>Test split vs base, n={testArms(g)[0].n_items}</caption>
+                  <thead><tr><th scope="col">Arm</th><th scope="col">Accuracy, pp (95% CI)</th><th scope="col">Tokens per item</th></tr></thead>
+                  <tbody>
+                    {testArms(g).map((a) => (
+                      <tr key={a.arm}><th scope="row">{a.arm}</th><td>{pp(a.diff)} ({pp(a.ci95[0])}, {pp(a.ci95[1])})</td><td>{(a.tokens_diff >= 0 ? '+' : '−') + Math.abs(a.tokens_diff).toFixed(1)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
               <details className="res-rec">
                 <summary>Record</summary>
                 <dl>
