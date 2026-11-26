@@ -9,7 +9,9 @@ import data from './results.json'
 const pc = (x) => (x * 100).toFixed(1) + '%'
 const capRow = (v) => { const s = v.cap_hit?.test ?? v.cap_hit?.confirm; return s && 'base' in s && 'edit' in s ? `base ${pc(s.base)} · edit ${pc(s.edit)} (${v.cap_hit.test ? 'test' : 'confirm'})` : null }
 
-const DOCS_VERDICTS = 'https://astro-weights.dev/docs/explanation/gate-verdicts/'
+// The gate ships in 0.3. Until that tag is on PyPI (__AW_VERSION__ = newest release tag), say so and link the dev docs.
+export const GATE_RELEASED = !/^0\.[0-2]\./.test(__AW_VERSION__)
+const DOCS_VERDICTS = `https://astro-weights.dev/docs/${GATE_RELEASED ? '' : 'dev/'}explanation/gate-verdicts/`
 export const isResults = () => location.pathname.startsWith('/results')
 
 export function Verdicts() {
