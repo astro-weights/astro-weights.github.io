@@ -614,3 +614,9 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .res-rec dt { margin-top: 6px; color: var(--dim); }
 .res-rec dd { margin: 0; overflow-wrap: anywhere; }
 .res-list + .adp-note { margin-top: 20px; }
+.res-arms { width: 100%; margin: 14px 0 4px; border-collapse: collapse; font-size: 0.95rem; }
+.res-arms caption { text-align: left; color: var(--dim); padding-bottom: 6px; }
+.res-arms th, .res-arms td { padding: 6px 8px 6px 0; text-align: left; border-top: 1px solid var(--line); font-weight: 400; font-variant-numeric: tabular-nums; }
+.res-arms thead th { color: var(--dim); font-size: 0.85rem; }
+.res-arms tbody th { font-family: var(--mono); }
+.res-ntc { margin: 10px 0 0; color: var(--dim); font-size: 0.85rem; }
