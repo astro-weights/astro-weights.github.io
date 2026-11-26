@@ -15,6 +15,10 @@ export const GATE_RELEASED = !/^0\.[0-2]\./.test(__AW_VERSION__)
 const pp = (x) => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(2)
 const testArms = (g) => g?.arms?.test?.arms ?? []
 
+// Base model's maker, by HF org, for the not-affiliated line (Marketing rule, same as adapter pages).
+const MAKERS = { 'google/': 'Google' }
+const maker = (base) => Object.entries(MAKERS).find(([k]) => base.startsWith(k))?.[1]
+
 const DOCS_VERDICTS = `https://astro-weights.dev/docs/${GATE_RELEASED ? '' : 'dev/'}explanation/gate-verdicts/`
 export const isResults = () => location.pathname.startsWith('/results')
 
@@ -63,6 +67,7 @@ export function Verdicts() {
                   </tbody>
                 </table>
               )}
+              {maker(base) && <p className="res-ntc">Not affiliated with or endorsed by {maker(base)}.</p>}
               <details className="res-rec">
                 <summary>Record</summary>
                 <dl>

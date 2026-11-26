@@ -619,3 +619,4 @@ h1 { font: 600 clamp(2.35rem, 0.9rem + 4.4vw, 5.2rem) / 1.02 var(--display); let
 .res-arms th, .res-arms td { padding: 6px 8px 6px 0; text-align: left; border-top: 1px solid var(--line); font-weight: 400; font-variant-numeric: tabular-nums; }
 .res-arms thead th { color: var(--dim); font-size: 0.85rem; }
 .res-arms tbody th { font-family: var(--mono); }
+.res-ntc { margin: 10px 0 0; color: var(--dim); font-size: 0.85rem; }
